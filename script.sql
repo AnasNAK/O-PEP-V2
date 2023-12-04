@@ -63,3 +63,8 @@ alter table command add constraint `fk_plid` foreign key (PlantId) references Pl
 
 
 alter table command add constraint `fk_usid` foreign key (UserId) references User(IdUser);
+
+
+ create table tag (
+     idTag int auto_increment primary key,
+     TagName varchar(20) not null);

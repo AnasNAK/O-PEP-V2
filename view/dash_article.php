@@ -31,9 +31,9 @@ $query = "SELECT * FROM article";
 $queryResult = mysqli_query($mysqli, $query);
 
 // Fetch the results as an associative array
-$queryResultArray = [];
+// $queryResultArray = [];
 while ($row = mysqli_fetch_assoc($queryResult)) {
-    $queryResultArray[] = $row;
+    $articles[] = $row;
 }
 
 // Now $queryResultArray contains all the articles
@@ -125,6 +125,8 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
             </div>
             <!-- ./Sidebar -->
 
+
+
             <div class="h-full ml-14 mt-14 mb-10 md:ml-64">
 
                 <div class="grid grid-cols-1  sm:grid-cols-2 gap-9 lg:grid-cols-2 p-4 lg:gap-32 ">
@@ -147,7 +149,7 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
                             </svg>
                         </div>
                         <div class="text-right">
-                            <p class="text-2xl"><?php echo $ArticleCount; ?></p>
+                            <p class="text-2xl"><?php echo $articleCount; ?></p>
                             <p>Articles</p>
                         </div>
                     </div>
@@ -158,9 +160,7 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
                         <div class="bg-white p-4 shadow-lg rounded-lg ">
                             <div class="flex justify-between ">
                                 <h1 class="font-bold text-base">Articles</h1>
-                                <a href="addPlante.php" class="transition duration-300 hover:scale-150">
-                                    <i class="bi bi-plus-circle "></i>
-                                </a>
+
                             </div>
                             <div class="mt-4">
                                 <div class="flex flex-col">
@@ -194,47 +194,43 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
                                                     </thead>
 
                                                     <tbody class="bg-white divide-y divide-gray-200">
-                                                        <?php //foreach ($plants as $plant) : 
-                                                        ?>
-                                                        <tr>
-                                                            <td class="w-9">
-                                                                <img src="<?php  echo $query_result['ArticleImg']; ?>" alt="article Image">
-                                                            </td>
-                                                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                                                <p><?php  echo htmlspecialchars($query_result['ArticleName']); 
-                                                                    ?></p>
-                                                            </td>
-                                                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                                                <div class="flex text-[#685942]">
-                                                                    <p>
-                                                                        <?php // echo htmlspecialchars($plant['price']); 
-                                                                        ?>
-                                                                    </p>
-                                                                </div>
-                                                            </td>
-                                                            <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                                                <div class="flex space-x-4">
-                                                                    <a href="editPlante.php?IdPlant=" class="text-blue-500 hover:text-blue-600">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                                        </svg>
-                                                                        <p>Edit</p>
-                                                                    </a>
-                                                                    <form action="" method="POST">
-                                                                        <input type="hidden" name="IdPlant" value="">
-                                                                        <button type="submit" name="deletePlant" class="text-red-500 hover:text-red-600">
+                                                        <?php foreach ($articles as $article) {   ?>
 
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                            </svg>
-                                                                            <p>Delete</p>
-                                                                        </button>
-                                                                    </form>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <?php // endforeach; 
-                                                        ?>
+                                                            <tr>
+                                                                <td class="w-9">
+                                                                    <img src="assets/images/<?php echo $article['ArticleImg']; ?>" alt="article Image">
+                                                                </td>
+                                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                                                    <p><?php echo $article['ArticleName'];
+                                                                        ?></p>
+                                                                </td>
+                                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                                                    <div class="flex text-[#685942]">
+                                                                        <p>
+                                                                        <div class="flex items-center mb-4">
+                                                                            <input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                                                            <label for="default-checkbox" class="ms-2 text-sm font-medium text-black ">Check to Display</label>
+                                                                        </div>
+                                                                        </p>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                                                    <div class="flex space-x-4">
+
+                                                                        <form action="" method="POST">
+                                                                            <input type="hidden" name="IdPlant" value="">
+                                                                            <button type="submit" name="deletePlant" class="text-red-500 hover:text-red-600">
+
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                                </svg>
+                                                                                <p>Delete</p>
+                                                                            </button>
+                                                                        </form>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        <?php } ?>
 
                                                     </tbody>
                                                 </table>
@@ -247,6 +243,7 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
                     </div>
                 </div>
             </div>
+
 
         </div>
     </div>

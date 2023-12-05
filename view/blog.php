@@ -74,21 +74,19 @@
 
 </section>
 <section class="absolute">
-<div class="grid grid-cols-4">
-<div class="flex flex-wrap place-items-center h-screen">
     <!-- card -->
     <div class="overflow-hidden shadow-lg transition duration-500 ease-in-out transform hover:-translate-y-5 hover:shadow-2xl rounded-lg h-90 w-60 md:w-80 cursor-pointer m-auto">
         <a href="#" class="w-full block h-full">
             <img alt="blog photo" src="https://images.unsplash.com/photo-1542435503-956c469947f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=967&q=80" class="max-h-40 w-full object-cover"/>
             <div class="bg-white w-full p-4">
                 <p class="text-indigo-500 text-2xl font-medium">
-                    Should You Get Online Education?
+                    <?php //article title ?>
                 </p>
                 <p class="text-gray-800 text-sm font-medium mb-2">
-                    A comprehensive guide about online education.
+                    <?php //theme ?>
                 </p>
                 <p class="text-gray-600 font-light text-md">
-                    It is difficult to believe that we have become so used to having instant access to information at...
+                   <?php //article content ?>
                     <a class="inline-flex text-indigo-500" href="#">Read More</a>
                 </p>
                 <div class="flex flex-wrap justify-starts items-center py-3 border-b-2 text-xs text-white font-medium">

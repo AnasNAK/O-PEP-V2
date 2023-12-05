@@ -1,8 +1,11 @@
 <?php
 include 'session.php';
 
+// Assuming you've already connected to the database using mysqli_connect
+// $mysqli = mysqli_connect("your_host", "your_username", "your_password", "your_database");
+
 // Check user session and retrieve the role
-$userRole = checkUserSession($pdo);
+$userRole = checkUserSession($mysqli);
 
 // Redirect based on user role
 if ($userRole === 'blocked') {
@@ -13,29 +16,27 @@ if ($userRole !== 'admin') {
     header("Location: SingIn.php");
 }
 
+// Count admins
+$countAdminsQuery = "SELECT COUNT(*) AS adminCount FROM user";
+$countAdminsResult = mysqli_query($mysqli, $countAdminsQuery);
+$adminCount = mysqli_fetch_assoc($countAdminsResult)['adminCount'];
 
-$countAdminsQuery = "SELECT COUNT(*) AS adminCount FROM user ";
-$countAdminsStmt = $pdo->prepare($countAdminsQuery);
-$countAdminsStmt->execute();
-$adminCount = $countAdminsStmt->fetch(PDO::FETCH_ASSOC)['adminCount'];
-//*********************************
-$countArticlesQuery = "SELECT COUNT(*) AS articleCount FROM article ";
-$countArticlesStmt = $pdo->prepare($countArticlesQuery);
-$countArticlesStmt->execute();
-$ArticleCount = $countArticlesStmt->fetch(PDO::FETCH_ASSOC)['articleCount'];
-//*********************************
+// Count articles
+$countArticlesQuery = "SELECT COUNT(*) AS articleCount FROM article";
+$countArticlesResult = mysqli_query($mysqli, $countArticlesQuery);
+$articleCount = mysqli_fetch_assoc($countArticlesResult)['articleCount'];
+
+// Fetch all articles
 $query = "SELECT * FROM article";
-$query_prep = $pdo ->query($query);
-$query_result = $query_prep  -> fetchAll(PDO::FETCH_ASSOC);
+$queryResult = mysqli_query($mysqli, $query);
 
+// Fetch the results as an associative array
+$queryResultArray = [];
+while ($row = mysqli_fetch_assoc($queryResult)) {
+    $queryResultArray[] = $row;
+}
 
-
-
-
-
-
-
-
+// Now $queryResultArray contains all the articles
 ?>
 
 

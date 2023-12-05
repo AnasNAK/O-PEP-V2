@@ -1,6 +1,9 @@
 <?php
 include 'session.php';
 
+// Assuming you've already connected to the database using mysqli_connect
+// $mysqli = mysqli_connect("your_host", "your_username", "your_password", "your_database");
+
 // Check user session and retrieve the role
 $userRole = checkUserSession($mysqli);
 
@@ -13,12 +16,9 @@ if ($userRole !== 'admin') {
     header("Location: SingIn.php");
 }
 
-
-
 $query = "SELECT * FROM Plant";
-$stmt = $pdo->query($query);
-$plants = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+$result = $mysqli->query($query);
+$plants = $result->fetch_all(MYSQLI_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePlant'])) {
     // Ensure the category ID to delete is set
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePlant'])) {
         // Get the category ID to be deleted
         $PlantIdToDelete = $_POST['IdPlant'];
 
-        // Prepare the delete query and execute (Replace 'categorie' with your table name)
+        // Prepare the delete query and execute
         $deleteQuery = "DELETE FROM Plant WHERE IdPlant = ?";
         $deleteStmt = $mysqli->prepare($deleteQuery);
         $deleteStmt->bind_param('i', $PlantIdToDelete);
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePlant'])) {
     }
 }
 
-$query = "SELECT * FROM categorie"; // Replace 'categorie' with your table name
+$query = "SELECT * FROM categorie";
 $result = $mysqli->query($query);
 $categories = $result->fetch_all(MYSQLI_ASSOC);
 
@@ -89,23 +89,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteCategory'])) {
     }
 }
 
-//count plantes
+// Count plants
 $countPlantsQuery = "SELECT COUNT(*) AS plantCount FROM plant";
-$countPlantsStmt = $pdo->prepare($countPlantsQuery);
-$countPlantsStmt->execute();
-$plantCount = $countPlantsStmt->fetch(PDO::FETCH_ASSOC)['plantCount'];
+$countPlantsResult = $mysqli->query($countPlantsQuery);
+$plantCount = $countPlantsResult->fetch_assoc()['plantCount'];
 
 // Count number of users with role admin
 $countAdminsQuery = "SELECT COUNT(*) AS adminCount FROM user WHERE roleId = 2";
-$countAdminsStmt = $pdo->prepare($countAdminsQuery);
-$countAdminsStmt->execute();
-$adminCount = $countAdminsStmt->fetch(PDO::FETCH_ASSOC)['adminCount'];
-
-
-// Count number of users with role admin
-$countAdminsQuery = "SELECT COUNT(*) AS adminCount FROM user WHERE roleId = 2";
-$countAdminsStmt = $mysqli->query($countAdminsQuery);
-$adminCount = $countAdminsStmt->fetch_assoc()['adminCount'];
+$countAdminsResult = $mysqli->query($countAdminsQuery);
+$adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
 ?>
 
 

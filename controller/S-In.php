@@ -1,5 +1,6 @@
 <?php
 
+
 include '../view/session.php'; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
@@ -23,13 +24,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
             $_SESSION['user_email'] = $email;
 
             // Redirect based on the user's role
-            if ($user['RoleId'] === '1') { 
+            if ($user['RoleId'] === 1) { 
                 header("Location: ../view/index.php");
-            } elseif ($user['RoleId'] === '2') { 
+            } elseif ($user['RoleId'] === 2) { 
                 header("Location: ../view/dashboard.php");
-            } elseif ($user['RoleId'] === '3') { 
+            } elseif ($user['RoleId'] === 3) { 
                 header("Location: ../view/dashboard-s.php");
-            } elseif ($user['RoleId'] === '4') { 
+            } elseif ($user['RoleId'] === 4) { 
                 header("Location: ../view/block-page.php");
             } else {
               

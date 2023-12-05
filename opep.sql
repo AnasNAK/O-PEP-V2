@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 04 déc. 2023 à 23:56
--- Version du serveur : 10.4.25-MariaDB
--- Version de PHP : 7.4.30
+-- Généré le : mar. 05 déc. 2023 à 12:23
+-- Version du serveur : 8.0.35
+-- Version de PHP : 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,15 +28,15 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `article` (
-  `IdArticle` int(11) NOT NULL,
+  `idArticle` int NOT NULL,
   `ArticleName` varchar(255) NOT NULL,
   `ArticleDes` varchar(255) NOT NULL,
   `ArticleImg` varchar(255) DEFAULT NULL,
-  `ArticleSt` int(11) DEFAULT 1,
-  `ThemeId` int(11) DEFAULT NULL,
-  `TagId` int(11) DEFAULT NULL,
-  `UserId` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `ArticleSt` int DEFAULT '1',
+  `ThemeId` int DEFAULT NULL,
+  `TagId` int DEFAULT NULL,
+  `UserId` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -45,10 +45,10 @@ CREATE TABLE `article` (
 --
 
 CREATE TABLE `cart` (
-  `IdCart` int(11) NOT NULL,
-  `PlantId` int(11) DEFAULT NULL,
-  `UserId` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `IdCart` int NOT NULL,
+  `PlantId` int DEFAULT NULL,
+  `UserId` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -57,9 +57,9 @@ CREATE TABLE `cart` (
 --
 
 CREATE TABLE `categorie` (
-  `IdCategorie` int(11) NOT NULL,
+  `IdCategorie` int NOT NULL,
   `CategorieName` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -68,11 +68,11 @@ CREATE TABLE `categorie` (
 --
 
 CREATE TABLE `command` (
-  `IdCommand` int(11) NOT NULL,
-  `TotalPrice` int(11) NOT NULL,
-  `PlantId` int(11) DEFAULT NULL,
-  `UserId` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `IdCommand` int NOT NULL,
+  `TotalPrice` int NOT NULL,
+  `PlantId` int DEFAULT NULL,
+  `UserId` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -81,12 +81,12 @@ CREATE TABLE `command` (
 --
 
 CREATE TABLE `comment` (
-  `idComment` int(11) NOT NULL,
+  `idComment` int NOT NULL,
   `Content` varchar(255) NOT NULL,
-  `cmntSt` int(11) DEFAULT 1,
-  `sessionId` int(11) NOT NULL,
-  `ArticleId` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `cmntSt` int DEFAULT '1',
+  `sessionId` int NOT NULL,
+  `ArticleId` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -95,10 +95,10 @@ CREATE TABLE `comment` (
 --
 
 CREATE TABLE `fav` (
-  `idfav` int(11) NOT NULL,
-  `articleId` int(11) DEFAULT NULL,
-  `sessionId` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `idfav` int NOT NULL,
+  `articleId` int DEFAULT NULL,
+  `sessionId` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -107,12 +107,12 @@ CREATE TABLE `fav` (
 --
 
 CREATE TABLE `plant` (
-  `IdPlant` int(11) NOT NULL,
+  `IdPlant` int NOT NULL,
   `Name` varchar(30) NOT NULL,
-  `price` int(11) NOT NULL,
+  `price` int NOT NULL,
   `image` varchar(255) NOT NULL,
-  `CategorieId` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `CategorieId` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -121,11 +121,11 @@ CREATE TABLE `plant` (
 --
 
 CREATE TABLE `reactart` (
-  `idreact` int(11) NOT NULL,
-  `reactart` int(11) NOT NULL,
-  `articleId` int(11) DEFAULT NULL,
-  `sessionId` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `idreact` int NOT NULL,
+  `reactart` int NOT NULL,
+  `articleId` int DEFAULT NULL,
+  `sessionId` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -134,11 +134,11 @@ CREATE TABLE `reactart` (
 --
 
 CREATE TABLE `reactcmnt` (
-  `idReact` int(11) NOT NULL,
-  `reactCmnt` int(11) NOT NULL,
-  `commentId` int(11) DEFAULT NULL,
-  `sessionId` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `idReact` int NOT NULL,
+  `reactCmnt` int NOT NULL,
+  `commentId` int DEFAULT NULL,
+  `sessionId` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -147,9 +147,9 @@ CREATE TABLE `reactcmnt` (
 --
 
 CREATE TABLE `role` (
-  `IdRole` int(11) NOT NULL,
+  `IdRole` int NOT NULL,
   `RoleName` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `role`
@@ -168,9 +168,9 @@ INSERT INTO `role` (`IdRole`, `RoleName`) VALUES
 --
 
 CREATE TABLE `tag` (
-  `idTag` int(11) NOT NULL,
+  `idTag` int NOT NULL,
   `TagName` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -179,12 +179,12 @@ CREATE TABLE `tag` (
 --
 
 CREATE TABLE `theme` (
-  `IdTheme` int(11) NOT NULL,
+  `IdTheme` int NOT NULL,
   `ThemeName` varchar(50) NOT NULL,
   `ThemeDesc` varchar(255) NOT NULL,
   `ThemImg` varchar(255) DEFAULT NULL,
-  `TagId` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `TagId` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -193,13 +193,13 @@ CREATE TABLE `theme` (
 --
 
 CREATE TABLE `user` (
-  `IdUser` int(11) NOT NULL,
+  `IdUser` int NOT NULL,
   `FirstName` varchar(255) NOT NULL,
   `LastName` varchar(255) NOT NULL,
   `Email` varchar(255) NOT NULL,
   `Password` varchar(255) NOT NULL,
-  `RoleId` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `RoleId` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `user`
@@ -220,7 +220,7 @@ INSERT INTO `user` (`IdUser`, `FirstName`, `LastName`, `Email`, `Password`, `Rol
 -- Index pour la table `article`
 --
 ALTER TABLE `article`
-  ADD PRIMARY KEY (`IdArticle`),
+  ADD PRIMARY KEY (`idArticle`),
   ADD KEY `FK_ThAc_id` (`ThemeId`),
   ADD KEY `FK_TgAc_id` (`TagId`),
   ADD KEY `FK_UsAc_id` (`UserId`);
@@ -314,76 +314,82 @@ ALTER TABLE `user`
 --
 
 --
+-- AUTO_INCREMENT pour la table `article`
+--
+ALTER TABLE `article`
+  MODIFY `idArticle` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT pour la table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `IdCart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `IdCart` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT pour la table `categorie`
 --
 ALTER TABLE `categorie`
-  MODIFY `IdCategorie` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `IdCategorie` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT pour la table `command`
 --
 ALTER TABLE `command`
-  MODIFY `IdCommand` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `IdCommand` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT pour la table `comment`
 --
 ALTER TABLE `comment`
-  MODIFY `idComment` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idComment` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `fav`
 --
 ALTER TABLE `fav`
-  MODIFY `idfav` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idfav` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `plant`
 --
 ALTER TABLE `plant`
-  MODIFY `IdPlant` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `IdPlant` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT pour la table `reactart`
 --
 ALTER TABLE `reactart`
-  MODIFY `idreact` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idreact` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `reactcmnt`
 --
 ALTER TABLE `reactcmnt`
-  MODIFY `idReact` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idReact` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `role`
 --
 ALTER TABLE `role`
-  MODIFY `IdRole` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `IdRole` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `tag`
 --
 ALTER TABLE `tag`
-  MODIFY `idTag` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idTag` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `theme`
 --
 ALTER TABLE `theme`
-  MODIFY `IdTheme` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `IdTheme` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `user`
 --
 ALTER TABLE `user`
-  MODIFY `IdUser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `IdUser` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Contraintes pour les tables déchargées
@@ -415,13 +421,13 @@ ALTER TABLE `command`
 -- Contraintes pour la table `comment`
 --
 ALTER TABLE `comment`
-  ADD CONSTRAINT `FK_cmntAC_id` FOREIGN KEY (`ArticleId`) REFERENCES `article` (`IdArticle`) ON DELETE CASCADE;
+  ADD CONSTRAINT `FK_cmntAC_id` FOREIGN KEY (`ArticleId`) REFERENCES `article` (`idArticle`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `fav`
 --
 ALTER TABLE `fav`
-  ADD CONSTRAINT `FK_artFav_id` FOREIGN KEY (`articleId`) REFERENCES `article` (`IdArticle`) ON DELETE CASCADE;
+  ADD CONSTRAINT `FK_artFav_id` FOREIGN KEY (`articleId`) REFERENCES `article` (`idArticle`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `plant`
@@ -433,7 +439,7 @@ ALTER TABLE `plant`
 -- Contraintes pour la table `reactart`
 --
 ALTER TABLE `reactart`
-  ADD CONSTRAINT `FK_artRct_id` FOREIGN KEY (`articleId`) REFERENCES `article` (`IdArticle`) ON DELETE CASCADE;
+  ADD CONSTRAINT `FK_artRct_id` FOREIGN KEY (`articleId`) REFERENCES `article` (`idArticle`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `reactcmnt`

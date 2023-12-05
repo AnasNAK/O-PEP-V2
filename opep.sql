@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 04 déc. 2023 à 10:27
+-- Généré le : lun. 04 déc. 2023 à 23:56
 -- Version du serveur : 10.4.25-MariaDB
 -- Version de PHP : 7.4.30
 
@@ -24,6 +24,23 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `article`
+--
+
+CREATE TABLE `article` (
+  `IdArticle` int(11) NOT NULL,
+  `ArticleName` varchar(255) NOT NULL,
+  `ArticleDes` varchar(255) NOT NULL,
+  `ArticleImg` varchar(255) DEFAULT NULL,
+  `ArticleSt` int(11) DEFAULT 1,
+  `ThemeId` int(11) DEFAULT NULL,
+  `TagId` int(11) DEFAULT NULL,
+  `UserId` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `cart`
 --
 
@@ -32,13 +49,6 @@ CREATE TABLE `cart` (
   `PlantId` int(11) DEFAULT NULL,
   `UserId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Déchargement des données de la table `cart`
---
-
-INSERT INTO `cart` (`IdCart`, `PlantId`, `UserId`) VALUES
-(31, 12, 7);
 
 -- --------------------------------------------------------
 
@@ -50,14 +60,6 @@ CREATE TABLE `categorie` (
   `IdCategorie` int(11) NOT NULL,
   `CategorieName` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Déchargement des données de la table `categorie`
---
-
-INSERT INTO `categorie` (`IdCategorie`, `CategorieName`) VALUES
-(8, 'waaaaaaaaaaa'),
-(9, 'anas');
 
 -- --------------------------------------------------------
 
@@ -72,26 +74,31 @@ CREATE TABLE `command` (
   `UserId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
+
 --
--- Déchargement des données de la table `command`
+-- Structure de la table `comment`
 --
 
-INSERT INTO `command` (`IdCommand`, `TotalPrice`, `PlantId`, `UserId`) VALUES
-(1, 1066, 12, 7),
-(2, 1066, 11, 7),
-(3, 244, 12, 7),
-(4, 40, 10, 7),
-(5, 947, 13, 7),
-(6, 40, 10, 7),
-(7, 862, 11, 7),
-(8, 862, 10, 7),
-(9, 40, 10, 7),
-(10, 1769, 11, 7),
-(11, 1769, 13, 7),
-(12, 987, 13, 7),
-(13, 987, 10, 7),
-(14, 244, 12, 7),
-(15, 244, 12, 7);
+CREATE TABLE `comment` (
+  `idComment` int(11) NOT NULL,
+  `Content` varchar(255) NOT NULL,
+  `cmntSt` int(11) DEFAULT 1,
+  `sessionId` int(11) NOT NULL,
+  `ArticleId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `fav`
+--
+
+CREATE TABLE `fav` (
+  `idfav` int(11) NOT NULL,
+  `articleId` int(11) DEFAULT NULL,
+  `sessionId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -107,21 +114,31 @@ CREATE TABLE `plant` (
   `CategorieId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
+
 --
--- Déchargement des données de la table `plant`
+-- Structure de la table `reactart`
 --
 
-INSERT INTO `plant` (`IdPlant`, `Name`, `price`, `image`, `CategorieId`) VALUES
-(10, 'Fredericka', 40, 'uploads/6567b64e423dc_png-7.png', 9),
-(11, 'Garrett Trevino', 822, 'uploads/6567d0a9bc294_png-5.png', 8),
-(12, 'Ruth Rodriguez', 244, 'uploads/6567ed82d9e73_png-4.png', 8),
-(13, 'Neville Randolph', 947, 'uploads/6567ed8ea143c_png-5.png', 9),
-(14, 'Candice Melendez', 904, 'uploads/6567ed9c4661a_png-2.png', 9),
-(15, 'Jena Goff', 324, 'uploads/6567edbf55aa0_png-1.png', 9),
-(16, 'Unity Carey', 279, 'uploads/6567edcb42e2d_png-3.png', 8),
-(17, 'Kibo Robbins', 770, 'uploads/6567edde1cbf3_png-6.png', 8),
-(18, 'Azalia Gilliam', 871, 'uploads/6567edf39fea5_png-5.png', 8),
-(19, 'Ali Bowers', 29, 'uploads/6568416d05a84_png-4.png', 8);
+CREATE TABLE `reactart` (
+  `idreact` int(11) NOT NULL,
+  `reactart` int(11) NOT NULL,
+  `articleId` int(11) DEFAULT NULL,
+  `sessionId` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `reactcmnt`
+--
+
+CREATE TABLE `reactcmnt` (
+  `idReact` int(11) NOT NULL,
+  `reactCmnt` int(11) NOT NULL,
+  `commentId` int(11) DEFAULT NULL,
+  `sessionId` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -158,6 +175,20 @@ CREATE TABLE `tag` (
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `theme`
+--
+
+CREATE TABLE `theme` (
+  `IdTheme` int(11) NOT NULL,
+  `ThemeName` varchar(50) NOT NULL,
+  `ThemeDesc` varchar(255) NOT NULL,
+  `ThemImg` varchar(255) DEFAULT NULL,
+  `TagId` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `user`
 --
 
@@ -177,11 +208,22 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`IdUser`, `FirstName`, `LastName`, `Email`, `Password`, `RoleId`) VALUES
 (5, 'anas', 'nakhli', 'anas@gmail.com', '$2y$10$FhAbRWFrkbmk2wg3Q23G0uph0jWTaq2Xx2yOUmce8Gv5BZMaI.ZPK', 3),
 (6, 'nakhli', 'nak', 'nak@gmail.com', '$2y$10$sErFQnsQ32s4310q2zLne.YBHLiEce3MS5sZNQA556ntuwOdQawL2', 2),
-(7, 'test', 'test', 'test@gmail.com', '$2y$10$A/fx.WhZEFDlyEkPuxTeTukMq5gwFYnJa8Zto/YWWeKJ.Xn8CJdk2', 1);
+(7, 'test', 'test', 'test@gmail.com', '$2y$10$A/fx.WhZEFDlyEkPuxTeTukMq5gwFYnJa8Zto/YWWeKJ.Xn8CJdk2', 2),
+(9, 'Qui odio et et eu si', 'Nihil neque ea labor', 'tasyvizyj@mailinator.com', '$2y$10$GjzJJTAVG19v2/5bHiqGNerjR2aJDGqsF1uGKrU2M1ISj5R3Rmjbe', 2),
+(10, 'nakhli', 'yxca', '123@gmail.com', '$2y$10$PRt1hcYYYohDw0n2wfEzBOz8I/YFdVyxhko82YokgWHp6rH06atfu', 1);
 
 --
 -- Index pour les tables déchargées
 --
+
+--
+-- Index pour la table `article`
+--
+ALTER TABLE `article`
+  ADD PRIMARY KEY (`IdArticle`),
+  ADD KEY `FK_ThAc_id` (`ThemeId`),
+  ADD KEY `FK_TgAc_id` (`TagId`),
+  ADD KEY `FK_UsAc_id` (`UserId`);
 
 --
 -- Index pour la table `cart`
@@ -202,8 +244,22 @@ ALTER TABLE `categorie`
 --
 ALTER TABLE `command`
   ADD PRIMARY KEY (`IdCommand`),
-  ADD KEY `fk_plid` (`PlantId`),
-  ADD KEY `fk_usid` (`UserId`);
+  ADD KEY `fk_usid` (`UserId`),
+  ADD KEY `fk_plid` (`PlantId`);
+
+--
+-- Index pour la table `comment`
+--
+ALTER TABLE `comment`
+  ADD PRIMARY KEY (`idComment`),
+  ADD KEY `FK_cmntAC_id` (`ArticleId`);
+
+--
+-- Index pour la table `fav`
+--
+ALTER TABLE `fav`
+  ADD PRIMARY KEY (`idfav`),
+  ADD KEY `FK_artFav_id` (`articleId`);
 
 --
 -- Index pour la table `plant`
@@ -211,6 +267,20 @@ ALTER TABLE `command`
 ALTER TABLE `plant`
   ADD PRIMARY KEY (`IdPlant`),
   ADD KEY `CategorieId` (`CategorieId`);
+
+--
+-- Index pour la table `reactart`
+--
+ALTER TABLE `reactart`
+  ADD PRIMARY KEY (`idreact`),
+  ADD KEY `FK_artRct_id` (`articleId`);
+
+--
+-- Index pour la table `reactcmnt`
+--
+ALTER TABLE `reactcmnt`
+  ADD PRIMARY KEY (`idReact`),
+  ADD KEY `FK_cmntRct_id` (`commentId`);
 
 --
 -- Index pour la table `role`
@@ -223,6 +293,13 @@ ALTER TABLE `role`
 --
 ALTER TABLE `tag`
   ADD PRIMARY KEY (`idTag`);
+
+--
+-- Index pour la table `theme`
+--
+ALTER TABLE `theme`
+  ADD PRIMARY KEY (`IdTheme`),
+  ADD KEY `FK_tgTH_id` (`TagId`);
 
 --
 -- Index pour la table `user`
@@ -240,25 +317,49 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT pour la table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `IdCart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `IdCart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT pour la table `categorie`
 --
 ALTER TABLE `categorie`
-  MODIFY `IdCategorie` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `IdCategorie` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT pour la table `command`
 --
 ALTER TABLE `command`
-  MODIFY `IdCommand` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `IdCommand` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT pour la table `comment`
+--
+ALTER TABLE `comment`
+  MODIFY `idComment` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `fav`
+--
+ALTER TABLE `fav`
+  MODIFY `idfav` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `plant`
 --
 ALTER TABLE `plant`
-  MODIFY `IdPlant` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `IdPlant` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT pour la table `reactart`
+--
+ALTER TABLE `reactart`
+  MODIFY `idreact` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `reactcmnt`
+--
+ALTER TABLE `reactcmnt`
+  MODIFY `idReact` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `role`
@@ -273,14 +374,28 @@ ALTER TABLE `tag`
   MODIFY `idTag` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT pour la table `theme`
+--
+ALTER TABLE `theme`
+  MODIFY `IdTheme` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT pour la table `user`
 --
 ALTER TABLE `user`
-  MODIFY `IdUser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `IdUser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Contraintes pour les tables déchargées
 --
+
+--
+-- Contraintes pour la table `article`
+--
+ALTER TABLE `article`
+  ADD CONSTRAINT `FK_TgAc_id` FOREIGN KEY (`TagId`) REFERENCES `tag` (`idTag`) ON DELETE CASCADE,
+  ADD CONSTRAINT `FK_ThAc_id` FOREIGN KEY (`ThemeId`) REFERENCES `theme` (`IdTheme`) ON DELETE CASCADE,
+  ADD CONSTRAINT `FK_UsAc_id` FOREIGN KEY (`UserId`) REFERENCES `user` (`IdUser`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `cart`
@@ -293,14 +408,44 @@ ALTER TABLE `cart`
 -- Contraintes pour la table `command`
 --
 ALTER TABLE `command`
-  ADD CONSTRAINT `fk_plid` FOREIGN KEY (`PlantId`) REFERENCES `plant` (`IdPlant`),
+  ADD CONSTRAINT `fk_plid` FOREIGN KEY (`PlantId`) REFERENCES `plant` (`IdPlant`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_usid` FOREIGN KEY (`UserId`) REFERENCES `user` (`IdUser`);
+
+--
+-- Contraintes pour la table `comment`
+--
+ALTER TABLE `comment`
+  ADD CONSTRAINT `FK_cmntAC_id` FOREIGN KEY (`ArticleId`) REFERENCES `article` (`IdArticle`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `fav`
+--
+ALTER TABLE `fav`
+  ADD CONSTRAINT `FK_artFav_id` FOREIGN KEY (`articleId`) REFERENCES `article` (`IdArticle`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `plant`
 --
 ALTER TABLE `plant`
   ADD CONSTRAINT `plant_ibfk_1` FOREIGN KEY (`CategorieId`) REFERENCES `categorie` (`IdCategorie`);
+
+--
+-- Contraintes pour la table `reactart`
+--
+ALTER TABLE `reactart`
+  ADD CONSTRAINT `FK_artRct_id` FOREIGN KEY (`articleId`) REFERENCES `article` (`IdArticle`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `reactcmnt`
+--
+ALTER TABLE `reactcmnt`
+  ADD CONSTRAINT `FK_cmntRct_id` FOREIGN KEY (`commentId`) REFERENCES `comment` (`idComment`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `theme`
+--
+ALTER TABLE `theme`
+  ADD CONSTRAINT `FK_tgTH_id` FOREIGN KEY (`TagId`) REFERENCES `tag` (`idTag`);
 
 --
 -- Contraintes pour la table `user`

@@ -2,7 +2,7 @@
 include 'session.php';
 
 // Check user session and retrieve the role
-$userRole = checkUserSession($pdo);
+$userRole = checkUserSession($mysqli);
 
 // Redirect based on user role
 if ($userRole === 'blocked') {
@@ -13,7 +13,6 @@ if ($userRole !== 'admin') {
     header("Location: SingIn.php");
 }
 
-
 // Initialize an error message variable
 $errorMsg = '';
 
@@ -22,21 +21,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Validate and process form data
     $categoryName = $_POST['name'];
 
-    try {
-        $query = "INSERT INTO categorie (CategorieName) VALUES (:name)";
-        $stmt = $pdo->prepare($query);
-        $stmt->bindParam(':name', $categoryName);
+    $query = "INSERT INTO categorie (CategorieName) VALUES (?)";
+    $stmt = $mysqli->prepare($query);
+
+    if ($stmt) {
+        $stmt->bind_param('s', $categoryName);
         $stmt->execute();
+        $stmt->close();
 
         // Redirect to the dashboard after successful insertion
         header("Location: dashboard.php");
         exit();
-    } catch (PDOException $e) {
+    } else {
         // Set an error message
-        $errorMsg = "Error: " . $e->getMessage();
+        $errorMsg = "Error preparing statement: " . $mysqli->error;
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html x-data="data()" lang="en">

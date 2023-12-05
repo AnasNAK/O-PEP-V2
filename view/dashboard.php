@@ -2,7 +2,7 @@
 include 'session.php';
 
 // Check user session and retrieve the role
-$userRole = checkUserSession($pdo);
+$userRole = checkUserSession($mysqli);
 
 // Redirect based on user role
 if ($userRole === 'blocked') {
@@ -13,10 +13,9 @@ if ($userRole !== 'admin') {
     header("Location: SingIn.php");
 }
 
-
-$query = "SELECT * FROM Plant"; 
-$stmt = $pdo->query($query);
-$plants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$query = "SELECT * FROM Plant";
+$result = $mysqli->query($query);
+$plants = $result->fetch_all(MYSQLI_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePlant'])) {
     // Ensure the category ID to delete is set
@@ -25,9 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePlant'])) {
         $PlantIdToDelete = $_POST['IdPlant'];
 
         // Prepare the delete query and execute (Replace 'categorie' with your table name)
-        $deleteQuery = "DELETE FROM Plant WHERE IdPlant = :PlantId";
-        $deleteStmt = $pdo->prepare($deleteQuery);
-        $deleteStmt->bindParam(':PlantId', $PlantIdToDelete);
+        $deleteQuery = "DELETE FROM Plant WHERE IdPlant = ?";
+        $deleteStmt = $mysqli->prepare($deleteQuery);
+        $deleteStmt->bind_param('i', $PlantIdToDelete);
 
         // Execute the delete query
         if ($deleteStmt->execute()) {
@@ -40,25 +39,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePlant'])) {
     }
 }
 
-
-
-
 $query = "SELECT * FROM categorie"; // Replace 'categorie' with your table name
-$stmt = $pdo->query($query);
-$categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+$result = $mysqli->query($query);
+$categories = $result->fetch_all(MYSQLI_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteCategory'])) {
     if (isset($_POST['categoryId'])) {
         $categoryIdToDelete = $_POST['categoryId'];
 
         // Check if there are related records in the plant table
-        $checkQuery = "SELECT * FROM plant WHERE CategorieId = :categoryId";
-        $checkStmt = $pdo->prepare($checkQuery);
-        $checkStmt->bindParam(':categoryId', $categoryIdToDelete);
+        $checkQuery = "SELECT * FROM plant WHERE CategorieId = ?";
+        $checkStmt = $mysqli->prepare($checkQuery);
+        $checkStmt->bind_param('i', $categoryIdToDelete);
         $checkStmt->execute();
 
-        $relatedPlants = $checkStmt->fetchAll(PDO::FETCH_ASSOC);
+        $relatedPlants = $checkStmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
         if (!empty($relatedPlants)) {
             // Handle related records in the plant table before deleting the category
@@ -67,19 +62,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteCategory'])) {
                 $plantId = $plant['IdPlant'];
 
                 // Delete the related plant
-                $deletePlantQuery = "DELETE FROM plant WHERE IdPlant = :plantId";
-                $deletePlantStmt = $pdo->prepare($deletePlantQuery);
-                $deletePlantStmt->bindParam(':plantId', $plantId);
+                $deletePlantQuery = "DELETE FROM plant WHERE IdPlant = ?";
+                $deletePlantStmt = $mysqli->prepare($deletePlantQuery);
+                $deletePlantStmt->bind_param('i', $plantId);
                 $deletePlantStmt->execute();
-                
+
                 // Alternatively, you might perform updates on related plants here
             }
         }
 
         // Proceed to delete the category after handling related records in the plant table
-        $deleteQuery = "DELETE FROM categorie WHERE IdCategorie = :categoryId";
-        $deleteStmt = $pdo->prepare($deleteQuery);
-        $deleteStmt->bindParam(':categoryId', $categoryIdToDelete);
+        $deleteQuery = "DELETE FROM categorie WHERE IdCategorie = ?";
+        $deleteStmt = $mysqli->prepare($deleteQuery);
+        $deleteStmt->bind_param('i', $categoryIdToDelete);
 
         if ($deleteStmt->execute()) {
             // After successful deletion, redirect or perform other actions
@@ -90,19 +85,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteCategory'])) {
         }
     }
 }
-        //count plantes
-        $countPlantsQuery = "SELECT COUNT(*) AS plantCount FROM plant";
-        $countPlantsStmt = $pdo->prepare($countPlantsQuery);
-        $countPlantsStmt->execute();
-        $plantCount = $countPlantsStmt->fetch(PDO::FETCH_ASSOC)['plantCount'];
 
-        // Count number of users with role admin
-        $countAdminsQuery = "SELECT COUNT(*) AS adminCount FROM user WHERE roleId = 2";
-        $countAdminsStmt = $pdo->prepare($countAdminsQuery);
-        $countAdminsStmt->execute();
-        $adminCount = $countAdminsStmt->fetch(PDO::FETCH_ASSOC)['adminCount'];
+// Count plantes
+$countPlantsQuery = "SELECT COUNT(*) AS plantCount FROM plant";
+$countPlantsStmt = $mysqli->query($countPlantsQuery);
+$plantCount = $countPlantsStmt->fetch_assoc()['plantCount'];
 
+// Count number of users with role admin
+$countAdminsQuery = "SELECT COUNT(*) AS adminCount FROM user WHERE roleId = 2";
+$countAdminsStmt = $mysqli->query($countAdminsQuery);
+$adminCount = $countAdminsStmt->fetch_assoc()['adminCount'];
 ?>
+
 
 
 

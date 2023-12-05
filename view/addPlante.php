@@ -2,7 +2,7 @@
 include 'session.php';
 
 // Check user session and retrieve the role
-$userRole = checkUserSession($pdo);
+$userRole = checkUserSession($mysqli);
 
 // Redirect based on user role
 if ($userRole === 'blocked') {
@@ -13,12 +13,10 @@ if ($userRole !== 'admin') {
     header("Location: SingIn.php");
 }
 
-
 // Fetch categories data from the database
 $query = "SELECT * FROM categorie"; // Replace 'categories' with your table name
-$stmt = $pdo->query($query);
-$categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+$result = $mysqli->query($query);
+$categories = $result->fetch_all(MYSQLI_ASSOC);
 
 // Handling form submission to add a plant
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -44,15 +42,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Move the uploaded file to the specified directory
         if (move_uploaded_file($imageTempName, $imagePath)) {
             // File uploaded successfully, proceed to insert plant data into the database
-            $insertQuery = "INSERT INTO Plant (Name, price, CategorieId, image) VALUES (:plantName, :plantPrice, :categoryId, :imagePath)";
-            $insertStmt = $pdo->prepare($insertQuery);
-            $insertStmt->bindParam(':plantName', $plantName);
-            $insertStmt->bindParam(':plantPrice', $plantPrice);
-            $insertStmt->bindParam(':categoryId', $categoryId);
-            $insertStmt->bindParam(':imagePath', $imagePath);
+            $insertQuery = "INSERT INTO Plant (Name, price, CategorieId, image) VALUES (?, ?, ?, ?)";
+            $insertStmt = $mysqli->prepare($insertQuery);
+            $insertStmt->bind_param('ssss', $plantName, $plantPrice, $categoryId, $imagePath);
 
             if ($insertStmt->execute()) {
-                // echo "<script>alert('Plant added successfully');</script>";
                 // Redirect or display success message
                 header("Location: dashboard.php");
                 exit();
@@ -61,6 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

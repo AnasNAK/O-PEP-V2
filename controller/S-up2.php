@@ -8,19 +8,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['valid'])) {
     if (isset($_POST['role'])) {
         $selectedRole = $_POST['role']; 
 
-      
         if (isset($_SESSION['user_email'])) {
             $userEmail = $_SESSION['user_email'];
 
-            try {
-            
-                $query = "UPDATE user SET roleId = :roleId WHERE email = :email";
-                $stmt = $pdo->prepare($query);
-                $stmt->bindParam(':roleId', $selectedRole);
-                $stmt->bindParam(':email', $userEmail);
-                $stmt->execute();
+            $query = "UPDATE user SET roleId = ? WHERE email = ?";
+            $stmt = $mysqli->prepare($query);
 
-              
+            if ($stmt) {
+                $stmt->bind_param('is', $selectedRole, $userEmail);
+                $stmt->execute();
+                $stmt->close();
+
                 if ($selectedRole == 1) {
                     header("Location: ../view/index.php"); 
                     exit();
@@ -28,9 +26,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['valid'])) {
                     header("Location: ../view/dashboard.php"); 
                     exit();
                 }
-            } catch (PDOException $e) {
-                // Handle errors
-                echo "Error: " . $e->getMessage();
+            } else {
+                // Handle the case where the prepare statement fails
+                echo "Error preparing statement: " . $mysqli->error;
             }
         } else {
             echo "User email not found in session."; 

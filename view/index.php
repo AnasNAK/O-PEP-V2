@@ -1,8 +1,9 @@
 <?php
+// Include the session.php file
 include 'session.php';
 
 // Check user session and retrieve the role
-$userRole = checkUserSession($pdo);
+$userRole = checkUserSession($mysqli);
 
 // Redirect based on user role
 if ($userRole === 'blocked') {
@@ -12,8 +13,6 @@ if ($userRole === 'blocked') {
 if ($userRole !== 'client') {
     header("Location: SingIn.php");
 }
-
-
 ?>
 
 

@@ -2,7 +2,7 @@
 include 'session.php';
 
 // Check user session and retrieve the role
-$userRole = checkUserSession($pdo);
+$userRole = checkUserSession($mysqli);
 
 // Redirect based on user role
 if ($userRole === 'blocked') {
@@ -12,31 +12,31 @@ if ($userRole === 'blocked') {
 if ($userRole !== 'admin') {
     header("Location: SingIn.php");
 }
+
 // Fetch plant details based on plant ID for editing
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['IdPlant'])) {
     $plantId = $_GET['IdPlant'];
 
-    $query = "SELECT * FROM `plant` WHERE IdPlant = :plantId";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':plantId', $plantId);
+    $query = "SELECT * FROM `plant` WHERE IdPlant = ?";
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param('i', $plantId);
     $stmt->execute();
-    $plant = $stmt->fetch(PDO::FETCH_ASSOC);
+    $result = $stmt->get_result();
+    $plant = $result->fetch_assoc();
 
-        // Fetch categories data from the database
-        $queryCategories = "SELECT * FROM categorie"; // Replace 'categorie' with your table name
-        $stmtCategories = $pdo->query($queryCategories);
-        $categories = $stmtCategories->fetchAll(PDO::FETCH_ASSOC);
+    // Fetch categories data from the database
+    $queryCategories = "SELECT * FROM categorie";
+    $resultCategories = $mysqli->query($queryCategories);
+    $categories = $resultCategories->fetch_all(MYSQLI_ASSOC);
 
     // Check if a plant with the specified ID exists
     if ($plant) {
         $plantName = $plant['Name'];
-
         $plantPrice = $plant['price'];
         $categoryId = $plant['CategorieId'];
-        $imagePath = $plant['image']; 
+        $imagePath = $plant['image'];
     }
 }
-
 
 // Handle plant update on form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePlant'])) {
@@ -44,29 +44,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePlant'])) {
     $plantId = $_GET['IdPlant'];
     $updatedName = $_POST['name'];
     $updatedPrice = $_POST['price'];
-    $updatedCategoryId = $_POST['category']; 
+    $updatedCategoryId = $_POST['category'];
 
     // Image upload handling
     $uploadDir = 'uploads/';
-    $uploadedImage = $_FILES['image']; // Retrieve uploaded file information
-    $imageName = $uploadedImage['name']; // Get the name of the uploaded file
-    $imageTempName = $uploadedImage['tmp_name']; // Get the temporary file name
+    $uploadedImage = $_FILES['image'];
 
     // Check if a new image was uploaded
-    if (!empty($imageName)) {
+    if (!empty($uploadedImage['name'])) {
+        $imageName = $uploadedImage['name'];
+        $imageTempName = $uploadedImage['tmp_name'];
+
         // Generate a unique name for the uploaded image to avoid conflicts
         $imagePath = $uploadDir . uniqid() . '_' . $imageName;
 
         // Move the uploaded file to the specified directory
         if (move_uploaded_file($imageTempName, $imagePath)) {
             // Update plant details with the new image path
-            $updateQuery = "UPDATE plant SET `Name` = :updatedName, price = :updatedPrice, CategorieId = :updatedCategoryId, `image` = :imagePath WHERE IdPlant = :plantId";
-            $updateStmt = $pdo->prepare($updateQuery);
-            $updateStmt->bindParam(':updatedName', $updatedName);
-            $updateStmt->bindParam(':updatedPrice', $updatedPrice);
-            $updateStmt->bindParam(':updatedCategoryId', $updatedCategoryId);
-            $updateStmt->bindParam(':imagePath', $imagePath);
-            $updateStmt->bindParam(':plantId', $plantId);
+            $updateQuery = "UPDATE plant SET `Name` = ?, price = ?, CategorieId = ?, `image` = ? WHERE IdPlant = ?";
+            $updateStmt = $mysqli->prepare($updateQuery);
+            $updateStmt->bind_param('ssisi', $updatedName, $updatedPrice, $updatedCategoryId, $imagePath, $plantId);
 
             if ($updateStmt->execute()) {
                 // Redirect or display success message
@@ -80,12 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePlant'])) {
         }
     } else {
         // No new image uploaded, update other plant details without changing the image
-        $updateQuery = "UPDATE plant SET `Name` = :updatedName, price = :updatedPrice, CategorieId = :updatedCategoryId WHERE IdPlant = :plantId";
-        $updateStmt = $pdo->prepare($updateQuery);
-        $updateStmt->bindParam(':updatedName', $updatedName);
-        $updateStmt->bindParam(':updatedPrice', $updatedPrice);
-        $updateStmt->bindParam(':updatedCategoryId', $updatedCategoryId);
-        $updateStmt->bindParam(':plantId', $plantId);
+        $updateQuery = "UPDATE plant SET `Name` = ?, price = ?, CategorieId = ? WHERE IdPlant = ?";
+        $updateStmt = $mysqli->prepare($updateQuery);
+        $updateStmt->bind_param('ssii', $updatedName, $updatedPrice, $updatedCategoryId, $plantId);
 
         if ($updateStmt->execute()) {
             // Redirect or display success message
@@ -96,9 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePlant'])) {
         }
     }
 }
-
-
 ?>
+
 
 </head>
 

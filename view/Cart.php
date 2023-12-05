@@ -2,7 +2,7 @@
 include 'session.php';
 
 // Check user session and retrieve the role
-$userRole = checkUserSession($pdo);
+$userRole = checkUserSession($mysqli);
 
 // Redirect based on user role
 if ($userRole === 'blocked') {
@@ -16,85 +16,84 @@ if ($userRole !== 'client') {
 // Fetch user ID using email from session
 $userEmail = $_SESSION['user_email'];
 
-$stmt = $pdo->prepare("SELECT IdUser FROM user WHERE email = ?");
-$stmt->execute([$userEmail]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-$userId = $user['IdUser']; 
+$stmt = $mysqli->prepare("SELECT IdUser FROM user WHERE email = ?");
+$stmt->bind_param('s', $userEmail);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$userId = $user['IdUser'];
 
 // Calculate total price using SQL
-$stmt = $pdo->prepare("
+$stmt = $mysqli->prepare("
     SELECT SUM(plant.price) AS total_price
     FROM cart
-     JOIN plant ON cart.PlantId = plant.IdPlant
+    JOIN plant ON cart.PlantId = plant.IdPlant
     WHERE cart.UserId = ?");
+$stmt->bind_param('i', $userId);
+$stmt->execute();
+$totalPriceResult = $stmt->get_result();
+$totalPrice = $totalPriceResult->fetch_assoc()['total_price'];
 
-$stmt->execute([$userId]);
-$totalPriceResult = $stmt->fetch(PDO::FETCH_ASSOC);
-$totalPrice = $totalPriceResult['total_price'];
+// Fetch cart items
+$stmt = $mysqli->prepare("
+    SELECT plant.IdPlant AS plant_id, plant.Name AS plant_name, plant.price AS plant_price , plant.image AS plant_image
+    FROM cart
+    JOIN plant ON cart.PlantId = plant.IdPlant
+    WHERE cart.UserId = ?");
+$stmt->bind_param('i', $userId);
+$stmt->execute();
+$cartItems = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePlant'])) {
+    $idplant = $_POST['idplant'];
 
-    // Fetch cart items
-    $stmt = $pdo->prepare("
-        SELECT plant.IdPlant AS plant_id, plant.Name AS plant_name, plant.price AS plant_price , plant.image AS plant_image
-        FROM cart
-        JOIN plant ON cart.PlantId = plant.IdPlant
-        WHERE cart.UserId = ?
-    ");
-    $stmt->execute([$userId]);
-    $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Proceed to delete the category after handling related records in the plant table
+    $deleteQuery = "DELETE FROM cart WHERE PlantId = ?";
+    $deleteStmt = $mysqli->prepare($deleteQuery);
+    $deleteStmt->bind_param('i', $idplant);
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePlant'])) {
-        
-        $idplant = $_POST['idplant'];
-
-     // Proceed to delete the category after handling related records in the plant table
-     $deleteQuery = "DELETE FROM cart WHERE PlantId = :IdPlant";
-     $deleteStmt = $pdo->prepare($deleteQuery);
-     $deleteStmt->bindParam(':IdPlant', $idplant);
-
-     if ($deleteStmt->execute()) {
-         // After successful deletion, redirect or perform other actions
-         header("Location: cart.php");
-         exit();
-     } else {
-         echo "Error deleting plant.";
-     }
-    }
-
-    $countQuery = "SELECT COUNT(*) AS cartCount FROM cart WHERE UserId = :userId";
-    $countStatement = $pdo->prepare($countQuery);
-    $countStatement->bindParam(':userId', $userId);
-    $countStatement->execute();
-    $cartCount = $countStatement->fetch(PDO::FETCH_ASSOC)['cartCount'] ?? 0;
-
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
-        // Insert into the 'commands' table
-        $insertCommandQuery = "INSERT INTO command (UserId, PlantId, TotalPrice) VALUES (:userId, :plantId, :totalPrice)";
-        $insertCommandStmt = $pdo->prepare($insertCommandQuery);
-        
-        // Retrieve cart items again to get plant IDs and insert each item into the commands table
-        $stmt = $pdo->prepare("SELECT PlantId FROM cart WHERE UserId = ?");
-        $stmt->execute([$userId]);
-        $plantIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    
-        foreach ($plantIds as $plantId) {
-            $insertCommandStmt->bindParam(':userId', $userId);
-            $insertCommandStmt->bindParam(':plantId', $plantId);
-            $insertCommandStmt->bindParam(':totalPrice', $totalPrice);
-            $insertCommandStmt->execute();
-        }
-    
-        // Delete cart items after successful checkout
-        $deleteCartQuery = "DELETE FROM cart WHERE UserId = ?";
-        $deleteCartStmt = $pdo->prepare($deleteCartQuery);
-        $deleteCartStmt->execute([$userId]);
-    
-        // Redirect after successful checkout
-        header("Location: success.php");
-        // echo "<script>displaySuccessMessage();</script>";
+    if ($deleteStmt->execute()) {
+        // After successful deletion, redirect or perform other actions
+        header("Location: cart.php");
         exit();
+    } else {
+        echo "Error deleting plant.";
     }
+}
+
+$countQuery = "SELECT COUNT(*) AS cartCount FROM cart WHERE UserId = ?";
+$countStatement = $mysqli->prepare($countQuery);
+$countStatement->bind_param('i', $userId);
+$countStatement->execute();
+$cartCount = $countStatement->get_result()->fetch_assoc()['cartCount'] ?? 0;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
+    // Insert into the 'commands' table
+    $insertCommandQuery = "INSERT INTO command (UserId, PlantId, TotalPrice) VALUES (?, ?, ?)";
+    $insertCommandStmt = $mysqli->prepare($insertCommandQuery);
+
+    // Retrieve cart items again to get plant IDs and insert each item into the commands table
+    $stmt = $mysqli->prepare("SELECT PlantId FROM cart WHERE UserId = ?");
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $plantIds = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+    foreach ($plantIds as $plantId) {
+        $insertCommandStmt->bind_param('iii', $userId, $plantId['PlantId'], $totalPrice);
+        $insertCommandStmt->execute();
+    }
+
+    // Delete cart items after successful checkout
+    $deleteCartQuery = "DELETE FROM cart WHERE UserId = ?";
+    $deleteCartStmt = $mysqli->prepare($deleteCartQuery);
+    $deleteCartStmt->bind_param('i', $userId);
+    $deleteCartStmt->execute();
+
+    // Redirect after successful checkout
+    header("Location: success.php");
+    // echo "<script>displaySuccessMessage();</script>";
+    exit();
+}
 ?>
 
 

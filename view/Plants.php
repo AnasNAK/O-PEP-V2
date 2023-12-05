@@ -2,7 +2,7 @@
 include 'session.php';
 
 // Check user session and retrieve the role
-$userRole = checkUserSession($pdo);
+$userRole = checkUserSession($mysqli);
 
 // Redirect based on user role
 if ($userRole === 'blocked') {
@@ -13,31 +13,30 @@ if ($userRole !== 'client') {
     header("Location: SingIn.php");
 }
 
-
 if (isset($_SESSION['user_email'])) {
     $userEmail = $_SESSION['user_email'];
 
-$query = "SELECT IdUser FROM user WHERE Email = :email";
-$statement = $pdo->prepare($query);
-$statement->bindParam(':email', $userEmail);
-$statement->execute();
-// Fetch the user ID
-$result = $statement->fetch(PDO::FETCH_ASSOC);
+    $query = "SELECT IdUser FROM user WHERE Email = ?";
+    $statement = $mysqli->prepare($query);
+    $statement->bind_param('s', $userEmail);
+    $statement->execute();
+    // Fetch the user ID
+    $result = $statement->get_result();
 
-if($result){
-    $userId = $result['IdUser'];
-
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $userId = $row['IdUser'];
+    }
 }
-}
 
-function fetchCategories($pdo) {
+function fetchCategories($mysqli) {
     $query = "SELECT * FROM categorie";
-    $stmt = $pdo->query($query);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $result = $mysqli->query($query);
+    return $result->fetch_all(MYSQLI_ASSOC);
 }
-$categories = fetchCategories($pdo);
+$categories = fetchCategories($mysqli);
 
-function fetchPlantsByCategory($pdo, $selectedCategory) {
+function fetchPlantsByCategory($mysqli, $selectedCategory) {
     // Initialize an empty array to store plant data
     $plants = [];
 
@@ -45,25 +44,26 @@ function fetchPlantsByCategory($pdo, $selectedCategory) {
     $query = "SELECT * FROM plant";
 
     if ($selectedCategory !== 'all') {
-        $query .= " WHERE CategorieId = :category";
+        $query .= " WHERE CategorieId = ?";
     }
 
     // Prepare the query
-    $stmt = $pdo->prepare($query);
+    $stmt = $mysqli->prepare($query);
 
     if ($selectedCategory !== 'all') {
-        $stmt->bindParam(':category', $selectedCategory);
+        $stmt->bind_param('i', $selectedCategory);
     }
 
     // Execute the query and fetch data
     $stmt->execute();
-    $plants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $result = $stmt->get_result();
+    $plants = $result->fetch_all(MYSQLI_ASSOC);
 
     return $plants;
 }
 
 // Fetch plant data based on the entered plant name
-function fetchPlantsByName($pdo, $plantName) {
+function fetchPlantsByName($mysqli, $plantName) {
     // Initialize an empty array to store plant data
     $plants = [];
 
@@ -71,20 +71,21 @@ function fetchPlantsByName($pdo, $plantName) {
     $query = "SELECT * FROM plant";
 
     if (!empty($plantName)) {
-        $query .= " WHERE Name LIKE :plantName";
+        $query .= " WHERE Name LIKE ?";
     }
 
     // Prepare the query
-    $stmt = $pdo->prepare($query);
+    $stmt = $mysqli->prepare($query);
 
     if (!empty($plantName)) {
         $plantNameParam = "%$plantName%";
-        $stmt->bindParam(':plantName', $plantNameParam);
+        $stmt->bind_param('s', $plantNameParam);
     }
 
     // Execute the query and fetch data
     $stmt->execute();
-    $plants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $result = $stmt->get_result();
+    $plants = $result->fetch_all(MYSQLI_ASSOC);
 
     return $plants;
 }
@@ -94,42 +95,42 @@ $plants = [];
 // Handle form submission for filtering by category
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['searchByCategory'])) {
     $selectedCategory = $_POST['categorie'] ?? 'all';
-    $plants = fetchPlantsByCategory($pdo, $selectedCategory);
-}elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['searchByName'])) {
+    $plants = fetchPlantsByCategory($mysqli, $selectedCategory);
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['searchByName'])) {
     $plantName = $_POST['PlantName'] ?? '';
-    $plants = fetchPlantsByName($pdo, $plantName);
-}else{
+    $plants = fetchPlantsByName($mysqli, $plantName);
+} else {
     try {
-      
-        $stmt = $pdo->query("SELECT * FROM plant"); 
-        $plants = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-       
+        $result = $mysqli->query("SELECT * FROM plant");
+        $plants = $result->fetch_all(MYSQLI_ASSOC);
+    } catch (Exception $e) {
         echo "Error: " . $e->getMessage();
     }
 }
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addToCart'])) {
     // Get the values from the form
     $plantId = $_POST['PlantId'];
     $userId = $_POST['UserId'];
-   
 
     // Prepare and execute the SQL INSERT statement
-    $stmt = $pdo->prepare("INSERT INTO cart (PlantId, UserId) VALUES (?, ?)");
-    $stmt->execute([$plantId, $userId]);
+    $stmt = $mysqli->prepare("INSERT INTO cart (PlantId, UserId) VALUES (?, ?)");
+    $stmt->bind_param('ii', $plantId, $userId);
+    $stmt->execute();
 
     // Redirect to the previous page or another location after adding to cart
     header("Location: plants.php");
     exit();
 }
 
-$countQuery = "SELECT COUNT(*) AS cartCount FROM cart WHERE UserId = :userId";
-$countStatement = $pdo->prepare($countQuery);
-$countStatement->bindParam(':userId', $userId);
+$countQuery = "SELECT COUNT(*) AS cartCount FROM cart WHERE UserId = ?";
+$countStatement = $mysqli->prepare($countQuery);
+$countStatement->bind_param('i', $userId);
 $countStatement->execute();
-$cartCount = $countStatement->fetch(PDO::FETCH_ASSOC)['cartCount'] ?? 0;
-
+$result = $countStatement->get_result();
+$cartCount = $result->fetch_assoc()['cartCount'] ?? 0;
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

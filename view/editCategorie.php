@@ -2,17 +2,16 @@
 include 'session.php';
 
 // Check user session and retrieve the role
-$userRole = checkUserSession($pdo);
+$userRole = checkUserSession($mysqli);
 
 // Redirect based on user role
 if ($userRole === 'blocked') {
     header("Location: block-page.php");
     exit();
 }
-  if ($userRole !== 'admin') {
+if ($userRole !== 'admin') {
     header("Location: SingIn.php");// Redirect if not an admin
 }
-
 
 // Initialize an error message variable
 $errorMsg = '';
@@ -21,13 +20,14 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET['IdCategorie'])) {
     $categoryId = $_GET['IdCategorie'];
 
     // Query to fetch category details from the database
-    $query = "SELECT * FROM categorie WHERE IdCategorie = :categoryId";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':categoryId', $categoryId);
+    $query = "SELECT * FROM categorie WHERE IdCategorie = ?";
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param('i', $categoryId);
     $stmt->execute();
 
     // Fetch category details
-    $category = $stmt->fetch(PDO::FETCH_ASSOC);
+    $categoryResult = $stmt->get_result();
+    $category = $categoryResult->fetch_assoc();
 
     // Check if category exists
     if ($category) {
@@ -44,20 +44,18 @@ if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET['IdCategorie'])) {
 
 // Handling form submission to update the category
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-  
     $updatedCategoryName = $_POST['catname'];
-
     $categoryId = $_GET['IdCategorie'];
 
     // Perform the update query based on the retrieved category ID
-    $query = "UPDATE `categorie` SET CategorieName = :updatedName WHERE IdCategorie = :categoryId";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':updatedName', $updatedCategoryName);
-    $stmt->bindParam(':categoryId', $categoryId);
+    $query = "UPDATE `categorie` SET CategorieName = ? WHERE IdCategorie = ?";
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param('si', $updatedCategoryName, $categoryId);
+
     if ($stmt->execute()) {
         echo "Category updated successfully";
     } else {
-        echo "Error updating category: " . $stmt->errorInfo()[2];
+        echo "Error updating category: " . $stmt->error;
     }
 
     // Redirect to the dashboard or another appropriate page after the update

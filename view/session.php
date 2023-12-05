@@ -3,38 +3,22 @@ include '../model/config.php';
 
 session_start();
 
-
-
-
-// function redirectToSignIn() {
-//     header("Location: SingIn.php");
-//     exit();
-// }
-
-// function redirectToIndex() {
-//     header("Location: index.php");
-//     exit();
-// }
-
-// function redirectToBlockedPage() {
-//     header("Location: blocked.php");
-//     exit();
-// }
-
-function checkUserSession($pdo) {
+function checkUserSession($mysqli) {
     if (isset($_SESSION['user_email'])) {
         $user_email = $_SESSION['user_email'];
 
-        try {
-            $query = "SELECT RoleId FROM user WHERE Email = :email";
-            $stmt = $pdo->prepare($query);
-            $stmt->bindParam(':email', $user_email);
+        $query = "SELECT RoleId FROM user WHERE Email = ?";
+        $stmt = $mysqli->prepare($query);
+
+        if ($stmt) {
+            $stmt->bind_param('s', $user_email);
             $stmt->execute();
 
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->get_result();
 
-            if ($result) {
-                $role_id = $result['RoleId'];
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $role_id = $row['RoleId'];
 
                 if ($role_id == 2) {
                     // Admin user
@@ -49,16 +33,19 @@ function checkUserSession($pdo) {
                     // User is blocked by Super Admin
                     return 'blocked';
                 }
+            } else {
+                // Handle the case where no rows are returned
+                echo "No user found with the specified email.";
             }
-        } catch (PDOException $e) {
-            // Handle errors
-            echo "Error: " . $e->getMessage();
+
+            $stmt->close();
+        } else {
+            // Handle the case where the prepare statement fails
+            echo "Error preparing statement: " . $mysqli->error;
         }
     }
 
     // // If session is not set or user doesn't match any role, redirect to signIn.php
     // redirectToSignIn();
 }
-
-
 ?>

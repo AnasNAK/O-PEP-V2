@@ -2,7 +2,7 @@
 include 'session.php';
 
 // Check user session and retrieve the role
-$userRole = checkUserSession($pdo);
+$userRole = checkUserSession($mysqli);
 
 // Redirect based on user role
 if ($userRole === 'blocked') {
@@ -13,29 +13,19 @@ if ($userRole !== 'superAdmin') {
     header("Location: SingIn.php");
 }
 
-
-
-
 // Fetch user details and their associated role names from different tables using JOIN
 $query = "
     SELECT u.IdUser, u.FirstName, r.RoleName 
     FROM User u 
-     JOIN Role r ON u.RoleId = r.IdRole";
-$stmt = $pdo->query($query);
-$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-
+    JOIN Role r ON u.RoleId = r.IdRole";
+$result = $mysqli->query($query);
+$users = $result->fetch_all(MYSQLI_ASSOC);
 
 $countAdminsQuery = "SELECT COUNT(*) AS adminCount FROM user ";
-$countAdminsStmt = $pdo->prepare($countAdminsQuery);
-$countAdminsStmt->execute();
-$adminCount = $countAdminsStmt->fetch(PDO::FETCH_ASSOC)['adminCount'];
-
-
-
-
+$countAdminsResult = $mysqli->query($countAdminsQuery);
+$adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
 ?>
+
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 
@@ -108,7 +98,7 @@ $adminCount = $countAdminsStmt->fetch(PDO::FETCH_ASSOC)['adminCount'];
                                         </path>
                                     </svg>
                                 </span>
-                                <span class="ml-2 text-sm tracking-wide truncate">Dashboard</span>
+                                <span class="ml-2 text-sm tracking-wide truncate">test</span>
                             </a>
                         </li>
 

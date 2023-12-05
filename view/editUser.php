@@ -2,7 +2,7 @@
 include 'session.php';
 
 // Check user session and retrieve the role
-$userRole = checkUserSession($pdo);
+$userRole = checkUserSession($mysqli);
 
 // Redirect based on user role
 if ($userRole === 'blocked') {
@@ -13,12 +13,10 @@ if ($userRole !== 'superAdmin') {
     header("Location: SingIn.php");
 }
 
-
-
 // Fetch the list of available roles
 $query = "SELECT Idrole, rolename FROM role";
-$stmt = $pdo->query($query);
-$roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$resultRoles = $mysqli->query($query);
+$roles = $resultRoles->fetch_all(MYSQLI_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['role']) && isset($_GET['IdUser'])) {
@@ -26,10 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userId = $_GET['IdUser'];
 
         // Update the user's role in the database
-        $updateQuery = "UPDATE user SET RoleId = :roleId WHERE IdUser = :userId";
-        $updateStmt = $pdo->prepare($updateQuery);
-        $updateStmt->bindParam(':roleId', $newRoleId);
-        $updateStmt->bindParam(':userId', $userId);
+        $updateQuery = "UPDATE user SET RoleId = ? WHERE IdUser = ?";
+        $updateStmt = $mysqli->prepare($updateQuery);
+        $updateStmt->bind_param('ii', $newRoleId, $userId);
         $updateStmt->execute();
 
         // Redirect back to the dashboard or users list
@@ -41,16 +38,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Fetch the user's current role based on IdUser from the URL
 if (isset($_GET['IdUser'])) {
     $userId = $_GET['IdUser'];
-    $query = "SELECT RoleId FROM user WHERE IdUser = :userId";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':userId', $userId);
+    $query = "SELECT RoleId FROM user WHERE IdUser = ?";
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param('i', $userId);
     $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
 
     // Store the current role ID for pre-selecting the dropdown option
     $Idrole = $user['RoleId'];
 }
 ?>
+
 <!-- HTML form structure -->
 <!DOCTYPE html>
 <html lang="en">

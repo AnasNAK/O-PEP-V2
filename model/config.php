@@ -1,17 +1,28 @@
 <?php
-$dsn = 'mysql:host=localhost;dbname=OPEP';
+$host = 'localhost';
 $user = 'root';
 $pass = '';
+$dbname = 'OPEP';
 
-try {
-    $pdo = new PDO($dsn, $user, $pass);
-   
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    // echo "Connected successfully";
-} catch (PDOException $e) {
-  
-    echo "Connection failed: " . $e->getMessage();
-}
+// Create a connection
+$mysqli = mysqli_connect($host, $user, $pass, $dbname);
 
+// // Check the connection
+// if (!$mysqli) {
+//     die("Connection failed: " . mysqli_connect_error());
+// }else{
+//     echo"connect ";
+// }
+
+// Set character set if needed
+mysqli_set_charset($mysqli, "utf8mb4");
+
+// Connected successfully
+// Uncomment the following line if you want to display a success message
+// echo "Connected successfully";
+
+// Note: Similar to the previous example, mysqli doesn't have a dedicated attribute for setting the default fetch mode globally.
+
+// Close the connection when you're done
+// mysqli_close($mysqli);
 ?>

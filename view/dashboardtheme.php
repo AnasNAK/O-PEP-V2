@@ -17,8 +17,10 @@ if ($userRole !== 'admin') {
 }
 
 $query = "SELECT * FROM Plant";
+$query1 = "SELECT* FROM theme";
 $result = $mysqli->query($query);
 $plants = $result->fetch_all(MYSQLI_ASSOC);
+$result = $mysqli->query($query1);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePlant'])) {
     // Ensure the category ID to delete is set
@@ -98,6 +100,10 @@ $plantCount = $countPlantsResult->fetch_assoc()['plantCount'];
 $countAdminsQuery = "SELECT COUNT(*) AS adminCount FROM user WHERE roleId = 2";
 $countAdminsResult = $mysqli->query($countAdminsQuery);
 $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
+// count themes
+$countThemesQuery = "SELECT COUNT(*) AS themeCount FROM theme";
+$countThemesResult = $mysqli->query($countThemesQuery);
+$themeCount = $countThemesResult->fetch_assoc()['themeCount'];
 ?>
 
 
@@ -116,12 +122,13 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
     <title>
 
     </title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/style.css">
     <link rel="icon" type="image/png" href="" />
     <link rel="stylesheet" href="./public/css/style.css">
 </head>
 
-<body class="bg-purple-400 font-[sitika]">
+<body class=" font-[sitika]">
 
     <div x-data="setup()" :class="{ 'dark': isDark }">
         <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased  ">
@@ -198,7 +205,7 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
             <div class="h-full ml-14 mt-14 mb-10 md:ml-64">
 
                 <div class="grid grid-cols-1  sm:grid-cols-2 gap-9 lg:grid-cols-2 p-4 lg:gap-32 ">
-                    <div class="bg-purple-900 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-purple-300 text-white">
+                    <div class="bg-slate-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-purple-300 text-white">
                         <div class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
                             <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="stroke-current text-black transform transition-transform duration-500 ease-in-out">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
@@ -210,15 +217,15 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
                             <p>Admins</p>
                         </div>
                     </div>
-                    <div class="bg-purple-900 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-purple-300 text-white font-medium group">
+                    <div class="bg-slate-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-purple-300 text-white font-medium group">
                         <div class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
                             <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="stroke-current text-black transform transition-transform duration-500 ease-in-out">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                             </svg>
                         </div>
                         <div class="text-right">
-                            <p class="text-2xl"><?php echo $plantCount; ?></p>
-                            <p>Plantes</p>
+                            <p class="text-2xl"><?php echo $themeCount; ?></p>
+                            <p>THEMES</p>
                         </div>
                     </div>
 
@@ -226,8 +233,8 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
                 <div class="col-span-12 mt-5 max-h-64 overflow-y-auto">
                     <div class="grid gap-2 grid-cols-1 lg:grid-cols-1">
                         <div class="bg-white p-4 shadow-lg rounded-lg ">
-                            <div class="flex justify-between ">
-                                <h1 class="font-bold text-base">Plantes</h1>
+                            <div class="flex justify-between">
+                                <h1 class="font-bold text-base">THEMES</h1>
                                 <a href="addPlante.php" class="transition duration-300 hover:scale-150">
                                     <i class="bi bi-plus-circle "></i>
                                 </a>
@@ -242,12 +249,12 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
                                                         <tr>
                                                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                                                 <div class="flex cursor-pointer">
-                                                                    <span class="mr-2">Plante img</span>
+                                                                    <span class="mr-2">theme img</span>
                                                                 </div>
                                                             </th>
                                                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                                                 <div class="flex cursor-pointer">
-                                                                    <span class="mr-2">Plante NAME</span>
+                                                                    <span class="mr-2">Theme NAME</span>
                                                                 </div>
                                                             </th>
                                                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
@@ -395,7 +402,7 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
     </main>
     </div>
     </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
 </body>
 
 </html>

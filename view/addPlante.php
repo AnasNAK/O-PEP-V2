@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Handle image upload
     $uploadDir = 'uploads/';
     if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0755, true); 
+        mkdir($uploadDir, 0755, true);
     }
     $uploadedImage = $_FILES['image']; // Retrieve uploaded file information
     $imageName = $uploadedImage['name']; // Get the name of the uploaded file
@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html lang="en">
 
 <head>
-<meta charset="UTF-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -72,32 +72,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link rel="stylesheet" href="/css/style.css">
     <link rel="icon" type="image/png" href="../public/img/logo-1.png" />
     <link rel="stylesheet" href="./public/css/style.css">
-   
+
 </head>
 
 <body class="bg-purple-700 font-[sitika] text-black">
     <section class="max-w-4xl p-6 mx-auto bg-purple-400 rounded-md shadow-md my-7">
-        <h1 class="text-4xl font-bold capitalize ">Add Plant</h1>
+        <h1 class="text-4xl font-bold capitalize ">Add Theme</h1>
         <form action="" method="POST" enctype="multipart/form-data">
             <div id="formInp">
                 <div class="form-group mb-6">
-                    <input type="text" name="name"
-                        class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                        placeholder="Plant Name">
+                    <input type="text" name="name" class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" placeholder="Theme Name">
                 </div>
-                <div class="form-group mb-6 flex gap-4">
-                    <div class="">
-                        <input type="number" name="price"
-                            class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                            placeholder="Plant Price">
-                    </div>
+                <!-- tags checklist to chnage their hidden status  start -->
+                <div class="flex items-center">
+                    <input checked id="checked-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <label for="checked-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Checked state</label>
                 </div>
-                <div class="form-group mb-6 w-full">
+                <!-- tags checklist to chnage their hidden status  -->
+                <div class="form-group mb-6 mt-6 w-full">
                     <select name="category" class="w-full p-2 rounded-md bg-white text-black">
-                        <option value="">Select Category</option>
+                        <option value="">Category</option>
+
                         <?php foreach ($categories as $category) : ?>
-                        <option value="<?php echo $category['IdCategorie']; ?>">
-                            <?php echo $category['CategorieName']; ?></option>
+                            <option value="<?php echo $category['IdCategorie']; ?>">
+                                <?php echo $category['CategorieName']; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -108,11 +106,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
             <div class="flex justify-between mt-6">
                 <div class="flex gap-6">
-                    <button type="submit"
-                        class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">Save</button>
+                    <button type="submit" class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">Save</button>
                     <a href="dashboard.php">
-                        <button type="button"
-                            class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">Cancel</button>
+                        <button type="button" class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">Cancel</button>
                     </a>
                 </div>
             </div>
@@ -121,4 +117,3 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </body>
 
 </html>
-

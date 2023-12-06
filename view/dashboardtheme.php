@@ -17,8 +17,10 @@ if ($userRole !== 'admin') {
 }
 
 $query = "SELECT * FROM Plant";
+$query1 = "SELECT* FROM theme";
 $result = $mysqli->query($query);
 $plants = $result->fetch_all(MYSQLI_ASSOC);
+$result = $mysqli->query($query1);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePlant'])) {
     // Ensure the category ID to delete is set
@@ -98,6 +100,10 @@ $plantCount = $countPlantsResult->fetch_assoc()['plantCount'];
 $countAdminsQuery = "SELECT COUNT(*) AS adminCount FROM user WHERE roleId = 2";
 $countAdminsResult = $mysqli->query($countAdminsQuery);
 $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
+// count themes
+$countThemesQuery = "SELECT COUNT(*) AS themeCount FROM theme";
+$countThemesResult = $mysqli->query($countThemesQuery);
+$themeCount = $countThemesResult->fetch_assoc()['themeCount'];
 ?>
 
 
@@ -116,12 +122,13 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
     <title>
 
     </title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/style.css">
     <link rel="icon" type="image/png" href="" />
     <link rel="stylesheet" href="./public/css/style.css">
 </head>
 
-<body class="bg-purple-400 font-[sitika]">
+<body class=" font-[sitika]">
 
     <div x-data="setup()" :class="{ 'dark': isDark }">
         <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased  ">
@@ -162,14 +169,14 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
                             </div>
                         </li>
                         <li>
-                            <a href="dashboard.php" class="relative flex flex-row items-center h-11 focus:outline-none transition hover:bg-purple-300 hover:text-[#000000] text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-white pr-6">
+                            <a href="dash_article.php" class="relative flex flex-row items-center h-11 focus:outline-none transition hover:bg-purple-300 hover:text-[#000000] text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-white pr-6">
                                 <span class="inline-flex justify-center items-center ml-4">
                                     <svg class="w-5 h-5 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
                                         </path>
                                     </svg>
                                 </span>
-                                <span class="ml-2 text-sm tracking-wide truncate">plantes</span>
+                                <span class="ml-2 text-sm tracking-wide truncate">Dashboard</span>
                             </a>
                             <a href="dash_article.php" class="relative flex flex-row items-center h-11 focus:outline-none transition hover:bg-purple-300 hover:text-[#000000] text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-white pr-6">
                                 <span class="inline-flex justify-center items-center ml-4">
@@ -179,34 +186,13 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
                                 </span>
                                 <span class="ml-2 text-sm tracking-wide truncate">Articles</span>
                             </a>
-
-                           
-
                             <a href="dashboardtheme.php" class="relative flex flex-row items-center h-11 focus:outline-none transition hover:bg-purple-300 hover:text-[#000000] text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-white pr-6">
-
                                 <span class="inline-flex justify-center items-center ml-4">
                                     <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512">
                                         <path d="M168 80c-13.3 0-24 10.7-24 24V408c0 8.4-1.4 16.5-4.1 24H440c13.3 0 24-10.7 24-24V104c0-13.3-10.7-24-24-24H168zM72 480c-39.8 0-72-32.2-72-72V112C0 98.7 10.7 88 24 88s24 10.7 24 24V408c0 13.3 10.7 24 24 24s24-10.7 24-24V104c0-39.8 32.2-72 72-72H440c39.8 0 72 32.2 72 72V408c0 39.8-32.2 72-72 72H72zM176 136c0-13.3 10.7-24 24-24h96c13.3 0 24 10.7 24 24v80c0 13.3-10.7 24-24 24H200c-13.3 0-24-10.7-24-24V136zm200-24h32c13.3 0 24 10.7 24 24s-10.7 24-24 24H376c-13.3 0-24-10.7-24-24s10.7-24 24-24zm0 80h32c13.3 0 24 10.7 24 24s-10.7 24-24 24H376c-13.3 0-24-10.7-24-24s10.7-24 24-24zM200 272H408c13.3 0 24 10.7 24 24s-10.7 24-24 24H200c-13.3 0-24-10.7-24-24s10.7-24 24-24zm0 80H408c13.3 0 24 10.7 24 24s-10.7 24-24 24H200c-13.3 0-24-10.7-24-24s10.7-24 24-24z" />
                                     </svg>
                                 </span>
-
-                               
-
                                 <span class="ml-2 text-sm tracking-wide truncate">Themes</span>
-
-                            </a>
-                            <a href="dash_tag.php" class="relative flex flex-row items-center h-11 focus:outline-none transition hover:bg-purple-300 hover:text-[#000000] text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-white pr-6">
-
-                                <span class="inline-flex justify-center items-center ml-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512">
-                                        <path d="M168 80c-13.3 0-24 10.7-24 24V408c0 8.4-1.4 16.5-4.1 24H440c13.3 0 24-10.7 24-24V104c0-13.3-10.7-24-24-24H168zM72 480c-39.8 0-72-32.2-72-72V112C0 98.7 10.7 88 24 88s24 10.7 24 24V408c0 13.3 10.7 24 24 24s24-10.7 24-24V104c0-39.8 32.2-72 72-72H440c39.8 0 72 32.2 72 72V408c0 39.8-32.2 72-72 72H72zM176 136c0-13.3 10.7-24 24-24h96c13.3 0 24 10.7 24 24v80c0 13.3-10.7 24-24 24H200c-13.3 0-24-10.7-24-24V136zm200-24h32c13.3 0 24 10.7 24 24s-10.7 24-24 24H376c-13.3 0-24-10.7-24-24s10.7-24 24-24zm0 80h32c13.3 0 24 10.7 24 24s-10.7 24-24 24H376c-13.3 0-24-10.7-24-24s10.7-24 24-24zM200 272H408c13.3 0 24 10.7 24 24s-10.7 24-24 24H200c-13.3 0-24-10.7-24-24s10.7-24 24-24zm0 80H408c13.3 0 24 10.7 24 24s-10.7 24-24 24H200c-13.3 0-24-10.7-24-24s10.7-24 24-24z" />
-                                    </svg>
-                                </span>
-
-                                <span class="ml-2 text-sm tracking-wide truncate">Tags</span>
-
-                              
-
                             </a>
                         </li>
 
@@ -219,7 +205,7 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
             <div class="h-full ml-14 mt-14 mb-10 md:ml-64">
 
                 <div class="grid grid-cols-1  sm:grid-cols-2 gap-9 lg:grid-cols-2 p-4 lg:gap-32 ">
-                    <div class="bg-purple-900 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-purple-300 text-white">
+                    <div class="bg-slate-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-purple-300 text-white">
                         <div class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
                             <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="stroke-current text-black transform transition-transform duration-500 ease-in-out">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
@@ -231,15 +217,15 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
                             <p>Admins</p>
                         </div>
                     </div>
-                    <div class="bg-purple-900 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-purple-300 text-white font-medium group">
+                    <div class="bg-slate-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-purple-300 text-white font-medium group">
                         <div class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
                             <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="stroke-current text-black transform transition-transform duration-500 ease-in-out">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                             </svg>
                         </div>
                         <div class="text-right">
-                            <p class="text-2xl"><?php echo $plantCount; ?></p>
-                            <p>Plantes</p>
+                            <p class="text-2xl"><?php echo $themeCount; ?></p>
+                            <p>THEMES</p>
                         </div>
                     </div>
 
@@ -247,8 +233,8 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
                 <div class="col-span-12 mt-5 max-h-64 overflow-y-auto">
                     <div class="grid gap-2 grid-cols-1 lg:grid-cols-1">
                         <div class="bg-white p-4 shadow-lg rounded-lg ">
-                            <div class="flex justify-between ">
-                                <h1 class="font-bold text-base">Plantes</h1>
+                            <div class="flex justify-between">
+                                <h1 class="font-bold text-base">THEMES</h1>
                                 <a href="addPlante.php" class="transition duration-300 hover:scale-150">
                                     <i class="bi bi-plus-circle "></i>
                                 </a>
@@ -263,12 +249,12 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
                                                         <tr>
                                                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                                                 <div class="flex cursor-pointer">
-                                                                    <span class="mr-2">Plante img</span>
+                                                                    <span class="mr-2">theme img</span>
                                                                 </div>
                                                             </th>
                                                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                                                 <div class="flex cursor-pointer">
-                                                                    <span class="mr-2">Plante NAME</span>
+                                                                    <span class="mr-2">Theme NAME</span>
                                                                 </div>
                                                             </th>
                                                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
@@ -416,7 +402,7 @@ $adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
     </main>
     </div>
     </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
 </body>
 
 </html>

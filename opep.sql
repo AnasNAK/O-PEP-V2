@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 05 déc. 2023 à 12:23
+-- Généré le : mer. 06 déc. 2023 à 11:37
 -- Version du serveur : 8.0.35
 -- Version de PHP : 8.2.4
 
@@ -36,6 +36,24 @@ CREATE TABLE `article` (
   `ThemeId` int DEFAULT NULL,
   `TagId` int DEFAULT NULL,
   `UserId` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `article`
+--
+
+INSERT INTO `article` (`idArticle`, `ArticleName`, `ArticleDes`, `ArticleImg`, `ArticleSt`, `ThemeId`, `TagId`, `UserId`) VALUES
+(1, 'article title', 'Using Lorem ipsum to focus attention on graphic elements in a webpage design proposal · One of the earliest examples of the Lorem ipsum', 'logo.png', 1, 1, 2, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `art_tag`
+--
+
+CREATE TABLE `art_tag` (
+  `ArticleId` int DEFAULT NULL,
+  `TagID` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -169,8 +187,36 @@ INSERT INTO `role` (`IdRole`, `RoleName`) VALUES
 
 CREATE TABLE `tag` (
   `idTag` int NOT NULL,
-  `TagName` varchar(20) NOT NULL
+  `TagName` varchar(20) NOT NULL,
+  `Themeid` int DEFAULT NULL,
+  `TagSt` int DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `tag`
+--
+
+INSERT INTO `tag` (`idTag`, `TagName`, `Themeid`, `TagSt`) VALUES
+(1, 'shadowPlants', 1, 1),
+(2, '#HouseDeco', 1, 1),
+(3, '#seeds', 1, 1),
+(4, '#plantlover', 1, 1),
+(5, '#gardenlife', 1, 1),
+(6, '#IndoorGardenMagic', 2, 1),
+(7, '#HouseplantHaven', 2, 1),
+(8, '#ApartmentGardening', 2, 1),
+(9, '#GreenSpacesInCity', 2, 1),
+(10, '#SmallSpaceGarden', 2, 1),
+(16, '#SustainableGarden', 3, 1),
+(17, '#OrganicGardenLife', 3, 1),
+(18, '#NativePlantLove', 3, 1),
+(19, '#GrowGreen', 3, 1),
+(20, '#ConsciousGardening', 3, 1),
+(21, '#MindfulGardening', 4, 1),
+(22, '#PlantMeditation', 4, 1),
+(23, '#WellnessOasis', 4, 1),
+(24, '#TherapeuticGardens', 4, 1),
+(25, '#StressFreeGreen', 4, 1);
 
 -- --------------------------------------------------------
 
@@ -183,8 +229,18 @@ CREATE TABLE `theme` (
   `ThemeName` varchar(50) NOT NULL,
   `ThemeDesc` varchar(255) NOT NULL,
   `ThemImg` varchar(255) DEFAULT NULL,
-  `TagId` int DEFAULT NULL
+  `ThemeSt` int DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `theme`
+--
+
+INSERT INTO `theme` (`IdTheme`, `ThemeName`, `ThemeDesc`, `ThemImg`, `ThemeSt`) VALUES
+(1, 'Edible Gardens', 'An edible garden is a great way to put healthy, inexpensive food on your table each day. Cooking from your garden with fresh, organic fruits and vegetables is not as difficult as it may seem.', '25e8355d-e4e6-4460-a1d9-b4d87ad22f69', 1),
+(2, 'Sustainable Gardening', 'Emphasize eco-friendly and sustainable gardening practices.Feature articles on organic gardening, permaculture, and using native plants to support local ecosystems.\r\n', NULL, 1),
+(3, 'Healing Gardens', 'Explore the therapeutic and wellness aspects of gardening.Include information on medicinal plants, aromatherapy gardens, and the mental health benefits of spending time in nature.', NULL, 1),
+(4, 'Urban Jungle', 'Focus on indoor plants, gardening in small spaces, and incorporating greenery into urban living.Provide tips on selecting and caring for houseplants that thrive indoors.\r\n\r\n', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -224,6 +280,13 @@ ALTER TABLE `article`
   ADD KEY `FK_ThAc_id` (`ThemeId`),
   ADD KEY `FK_TgAc_id` (`TagId`),
   ADD KEY `FK_UsAc_id` (`UserId`);
+
+--
+-- Index pour la table `art_tag`
+--
+ALTER TABLE `art_tag`
+  ADD KEY `fk_pivot_art_id` (`ArticleId`),
+  ADD KEY `fk_pivot_tag_id` (`TagID`);
 
 --
 -- Index pour la table `cart`
@@ -292,14 +355,14 @@ ALTER TABLE `role`
 -- Index pour la table `tag`
 --
 ALTER TABLE `tag`
-  ADD PRIMARY KEY (`idTag`);
+  ADD PRIMARY KEY (`idTag`),
+  ADD KEY `FK_THtg_id` (`Themeid`);
 
 --
 -- Index pour la table `theme`
 --
 ALTER TABLE `theme`
-  ADD PRIMARY KEY (`IdTheme`),
-  ADD KEY `FK_tgTH_id` (`TagId`);
+  ADD PRIMARY KEY (`IdTheme`);
 
 --
 -- Index pour la table `user`
@@ -317,7 +380,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT pour la table `article`
 --
 ALTER TABLE `article`
-  MODIFY `idArticle` int NOT NULL AUTO_INCREMENT;
+  MODIFY `idArticle` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `cart`
@@ -377,13 +440,13 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT pour la table `tag`
 --
 ALTER TABLE `tag`
-  MODIFY `idTag` int NOT NULL AUTO_INCREMENT;
+  MODIFY `idTag` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT pour la table `theme`
 --
 ALTER TABLE `theme`
-  MODIFY `IdTheme` int NOT NULL AUTO_INCREMENT;
+  MODIFY `IdTheme` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `user`
@@ -402,6 +465,13 @@ ALTER TABLE `article`
   ADD CONSTRAINT `FK_TgAc_id` FOREIGN KEY (`TagId`) REFERENCES `tag` (`idTag`) ON DELETE CASCADE,
   ADD CONSTRAINT `FK_ThAc_id` FOREIGN KEY (`ThemeId`) REFERENCES `theme` (`IdTheme`) ON DELETE CASCADE,
   ADD CONSTRAINT `FK_UsAc_id` FOREIGN KEY (`UserId`) REFERENCES `user` (`IdUser`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `art_tag`
+--
+ALTER TABLE `art_tag`
+  ADD CONSTRAINT `fk_pivot_art_id` FOREIGN KEY (`ArticleId`) REFERENCES `article` (`idArticle`),
+  ADD CONSTRAINT `fk_pivot_tag_id` FOREIGN KEY (`TagID`) REFERENCES `tag` (`idTag`);
 
 --
 -- Contraintes pour la table `cart`
@@ -448,10 +518,10 @@ ALTER TABLE `reactcmnt`
   ADD CONSTRAINT `FK_cmntRct_id` FOREIGN KEY (`commentId`) REFERENCES `comment` (`idComment`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `theme`
+-- Contraintes pour la table `tag`
 --
-ALTER TABLE `theme`
-  ADD CONSTRAINT `FK_tgTH_id` FOREIGN KEY (`TagId`) REFERENCES `tag` (`idTag`);
+ALTER TABLE `tag`
+  ADD CONSTRAINT `FK_THtg_id` FOREIGN KEY (`Themeid`) REFERENCES `theme` (`IdTheme`);
 
 --
 -- Contraintes pour la table `user`

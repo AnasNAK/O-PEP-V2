@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
 </head>
 
 <body class="relative">
@@ -319,89 +321,73 @@
 
 
     </section>
+    <section class="mt-5">
+        <form action="" method="post">
+            <div class="max-w-xl m-auto mb-5">
+                <div class="flex space-x-4">
+                    <div class="flex rounded-md overflow-hidden w-full">
+                        <input type="text" placeholder="Article name" name="PlantName"
+                            class="pl-2 w-full bg-purple-300 font-bold rounded-md rounded-r-none placeholder-black" />
+                        <button type="submit" name="searchByName"
+                            class="bg-purple-400 text-white px-6 text-lg font-semibold py-4 rounded-r-md  hover:bg-purple-600 duration-200">Search</button>
+                    </div>
 
-    <div class="bg-purple-100 dark:bg-gray-800 overflow-hidden relative mb-5">
-        <div class="text-start w-1/2 py-12 px-4 sm:px-6 lg:py-16 lg:px-8 z-20">
-            <h2 class="text-3xl font-extrabold text-black dark:text-white sm:text-4xl">
-                <span class="block">
-                    snake Plant
-                </span>
+                </div>
+            </div>
+        </form>
+    </section>
+    <section class="grid grid-cols-3 gap-4">
+        <div class="min-h-screen  justify-center items-center ">
+            <div class="container flex justify-center ">
+                <div class="max-w-sm py-20 ">
+                    <div class=" relative shadow-lg hover:shadow-xl transition duration-500 rounded-lg bg-purple-100">
+                        <img class="rounded-t-lg w-2/4 h-[200px]" src="assets/images/png-7.png" />
+                        <div class="py-6 px-8 rounded-lg bg-purple-200">
+                            <h1 class="text-gray-700 font-bold text-2xl mb-3 hover:text-gray-900 hover:cursor-pointer">
+                                I'm
+                                supper plant for you.</h1>
+                            <p class="text-gray-700 tracking-wide">Lorem ipsum dolor sit amet consectetur, adipisicing
+                                elit.
+                                Eum, labore. Ea debitis beatae sequi deleniti.</p>
+                            <form class="pt-5" action="" method="POST">
+                                <button type="submit"
+                                    class="px-6 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                    See More
+                                </button>
+                                <button type="submit"
+                                    class="px-6 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                    Edit Article
+                                </button>
+                            </form>
+                        </div>
+                        <div class="absolute top-2 right-2 py-2 px-4 bg-purple-200 rounded-lg">
+                            <div class="flex items-center mb-4">
 
-            </h2>
-            <p class="text-xl mt-4 text-gray-400">
-                I had noticed that both in the very poor and very rich extremes of society the mad were often allowed to
-                mingle freely
-            </p>
-            <div class="lg:mt-0 lg:flex-shrink-0">
-                <div class="mt-12 inline-flex rounded-md shadow">
+                                <div class="mr-2">
+                                    <i class="fas fa-thumbs-up text-blue-500 text-2xl cursor-pointer"></i>
+                                </div>
 
-                    <form action="" method="POST">
-                        <button type="submit"
-                            class="px-6 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-purple-300 transition hover:bg-purple-900 hover:text-white">
-                            See More
-                        </button>
-                        <button type="submit"
-                            class="px-6 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-purple-300 transition hover:bg-purple-900 hover:text-white">
-                            Edit Theme
-                        </button>
-                    </form>
+                                <span class="text-sm">100</span>
+                            </div>
+
+                            <div class="flex items-center">
+
+                                <div class="mr-2">
+                                    <i class="fas fa-thumbs-down text-red-500 text-2xl cursor-pointer"></i>
+                                </div>
+
+                                <span class="text-sm">20</span>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <img src="assets/images/png-4.png" class="absolute top-0 right-0 hidden h-full max-w-1/2 lg:block" />
-    </div>
-    <div class="bg-purple-100 dark:bg-gray-800 overflow-hidden relative mb-5">
-        <div class="text-start w-1/2 py-12 px-4 sm:px-6 lg:py-16 lg:px-8 z-20">
-            <h2 class="text-3xl font-extrabold text-black dark:text-white sm:text-4xl">
-                <span class="block">
-                    snake Plant
-                </span>
 
-            </h2>
-            <p class="text-xl mt-4 text-gray-400">
-                I had noticed that both in the very poor and very rich extremes of society the mad were often allowed to
-                mingle freely
-            </p>
-            <div class="lg:mt-0 lg:flex-shrink-0">
-                <div class="mt-12 inline-flex rounded-md shadow">
+    </section>
 
-                    <form action="" method="POST">
-                        <button type="submit"
-                            class="px-6 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-purple-300 transition hover:bg-purple-900 hover:text-white">
-                            See More
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <img src="assets/images/png-4.png" class="absolute top-0 right-0 hidden h-full max-w-1/2 lg:block" />
-    </div>
-    <div class="bg-purple-100 dark:bg-gray-800 overflow-hidden relative mb-5">
-        <div class="text-start w-1/2 py-12 px-4 sm:px-6 lg:py-16 lg:px-8 z-20">
-            <h2 class="text-3xl font-extrabold text-black dark:text-white sm:text-4xl">
-                <span class="block">
-                    snake Plant
-                </span>
 
-            </h2>
-            <p class="text-xl mt-4 text-gray-400">
-                I had noticed that both in the very poor and very rich extremes of society the mad were often allowed to
-                mingle freely
-            </p>
-            <div class="lg:mt-0 lg:flex-shrink-0">
-                <div class="mt-12 inline-flex rounded-md shadow">
-
-                    <form action="" method="POST">
-                        <button type="submit"
-                            class="px-6 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-purple-300 transition hover:bg-purple-900 hover:text-white">
-                            See More
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <img src="assets/images/png-4.png" class="absolute top-0 right-0 hidden h-full max-w-1/2 lg:block" />
-    </div>
 
     <footer class="bg-white">
         <div class="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">

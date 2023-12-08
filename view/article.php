@@ -176,32 +176,28 @@ include "../controller/crud_article.php";
 
     </section>
     <section class="mt-5">
-        <form action="" method="post">
+        <form action="" method="POST">
             <div class="max-w-xl m-auto mb-5">
                 <div class="flex space-x-4">
                     <div class="flex rounded-md overflow-hidden w-full">
-                        <input type="text" placeholder="Article name" name="PlantName" class="pl-2 w-full bg-purple-300 font-bold rounded-md rounded-r-none placeholder-black" />
-                        <button type="submit" name="searchByName" class="bg-purple-400 text-white px-6 text-lg font-semibold py-4 rounded-r-md  hover:bg-purple-600 duration-200">Search</button>
+                        <input id="LiveSearch" name="article_name" type="text" placeholder="Article name" class="pl-2 w-full bg-purple-300 font-bold rounded-md rounded-r-none placeholder-black" />
                     </div>
-
                 </div>
             </div>
         </form>
     </section>
 
 
+
     <section>
-        <div
-            class="fixed flex flex-col top-14 right-0 w-1/4 hover:w-64 md:w-64 bg-purple-900 h-full  text-white transition-all duration-300 border-none z-1 sidebar">
+        <div class="fixed flex flex-col top-14 right-0 w-1/4 hover:w-64 md:w-64 bg-purple-900 h-full  text-white transition-all duration-300 border-none z-1 sidebar">
             <div class="p-9 overflow-y-auto overflow-x-hidden flex flex-col justify-between flex-grow">
                 <div class="flex items-center">
                     <input type="checkbox" id="check1" class="hidden" />
                     <label for="check1" class="cursor-pointer flex items-center">
-                        <div
-                            class="w-5 h-5 border border-gray-300 rounded-md flex-shrink-0 mr-2 focus-within:border-white">
+                        <div class="w-5 h-5 border border-gray-300 rounded-md flex-shrink-0 mr-2 focus-within:border-white">
                             <!-- Use a visible icon for the checked state -->
-                            <svg class="w-3 h-3 hidden text-xl m-auto font-bold checked-icon" viewBox="0 0 20 20"
-                                fill="white" stroke="currentColor">
+                            <svg class="w-3 h-3 hidden text-xl m-auto font-bold checked-icon" viewBox="0 0 20 20" fill="white" stroke="currentColor">
                                 <path d="M0 11l2-2 5 5L18 3l2 2L7 18z"></path>
                             </svg>
                         </div>
@@ -216,68 +212,94 @@ include "../controller/crud_article.php";
                 <i class="bi bi-plus-circle text-black font-bold text-xl "></i>
             </button>
             <div class="grid grid-cols-3  gap-4 ml-11 ">
-                <div class="container ">
-                    <div class="max-w-sm py-20   ">
-                        <div
-                            class=" relative shadow-lg hover:shadow-xl transition duration-500 rounded-lg bg-purple-100">
-                            <img class="rounded-t-lg w-2/4 h-[200px]" src="assets/images/png-7.png" />
-                            <div class="py-6 p-3 w-[100%] rounded-lg bg-purple-200">
-                                <h1
-                                    class="text-gray-700 font-bold text-2xl mb-3 hover:text-gray-900 hover:cursor-pointer">
-                                    I'm
-                                    supper plant for you.</h1>
-                                <p class="text-gray-700 tracking-wide">Lorem ipsum dolor sit amet consectetur,
-                                    adipisicing
-                                    elit.
-                                    Eum, labore. Ea debitis beatae sequi deleniti.</p>
-                                <form class="pt-5 flex flex-col justify-center gap-2 mr-3" action="" method="POST">
-                                    <button type="submit"
-                                        class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
-                                        Delete
-                                    </button>
-                                    <div>
 
-                                        <button type="submit"
-                                            class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
-                                            See&nbsp;More
-                                        </button>
-                                        <button type="submit"
-                                            class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
-                                            Edit&nbsp;Article
-                                        </button>
+                <?php
+
+
+                $query = "SELECT * FROM article";
+                $do = mysqli_query($mysqli, $query);
+                $rows = mysqli_fetch_all($do, MYSQLI_ASSOC);
+
+
+
+                foreach ($rows as $row) {
+
+
+                ?>
+
+                    <div class="container ">
+                        <div id="resultat">
+
+                        </div>
+
+                        <div id="old">
+                            <div id="ok" class="max-w-sm py-20   ">
+                                <div class=" relative shadow-lg hover:shadow-xl transition duration-500 rounded-lg bg-purple-100">
+                                    <img class="rounded-t-lg w-2/4 h-[200px]" src="assets/images/<?php echo $row['ArticleImg']; ?>" />
+                                    <div class="py-6 p-3 w-[100%] rounded-lg bg-purple-200">
+                                        <h1 class="text-gray-700 font-bold text-2xl mb-3 hover:text-gray-900 hover:cursor-pointer">
+                                            <?php echo $row['ArticleName']; ?>
+                                        </h1>
+                                        <p class="text-gray-700 tracking-wide">
+                                            <?php
+                                            echo $row['ArticleDes'];
+                                            ?>
+                                        </p>
+                                        <form class="pt-5 flex flex-col justify-center gap-2 mr-3" action="" method="POST">
+                                            <button type="submit" class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                                Delete
+                                            </button>
+                                            <div>
+
+                                                <button type="submit" class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                                    See&nbsp;More
+                                                </button>
+                                                <button type="submit" class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                                    Edit&nbsp;Article
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
-                                </form>
-                            </div>
-                            <div class="absolute top-2 right-2 py-2 px-4 bg-purple-200 rounded-lg">
-                                <div class="flex items-center mb-4">
+                                    <div class="absolute top-2 right-2 py-2 px-4 bg-purple-200 rounded-lg">
+                                        <div class="flex items-center mb-4">
 
 
-                                    <div class="mr-2">
-                                        <i class="fas fa-thumbs-up text-blue-500 text-2xl cursor-pointer"></i>
+                                            <div class="mr-2">
+                                                <i class="fas fa-thumbs-up text-blue-500 text-2xl cursor-pointer"></i>
+                                            </div>
+
+                                            <span class="text-sm">100</span>
+                                        </div>
+
+                                        <div class="flex items-center">
+
+                                            <div class="mr-2">
+                                                <i class="fas fa-thumbs-down text-red-500 text-2xl cursor-pointer"></i>
+                                            </div>
+
+                                            <span class="text-sm">20</span>
+                                        </div>
+
                                     </div>
-
-                                    <span class="text-sm">100</span>
                                 </div>
-
-                                <div class="flex items-center">
-
-                                    <div class="mr-2">
-                                        <i class="fas fa-thumbs-down text-red-500 text-2xl cursor-pointer"></i>
-                                    </div>
-
-                                    <span class="text-sm">20</span>
-                                </div>
-
                             </div>
+
                         </div>
                     </div>
-                </div>
-
-
             </div>
+            <?php  ?>
+
+
+
+        <?php
+                }
+        ?>
+
 
         </div>
     </section>
+    <?php
+    ?>
 
 
 
@@ -337,6 +359,9 @@ include "../controller/crud_article.php";
         </div>
     </footer>
 
+
+
+    <script src="../view/assets/javascript/ajax.js"></script>
 </body>
 
 </html>

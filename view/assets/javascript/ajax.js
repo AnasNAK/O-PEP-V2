@@ -1,15 +1,17 @@
+$(document).ready(function() {
+    $("#LiveSearch").keyup(function(e) {
+        e.preventDefault();
+        var articleName = $(this).val();
 
-// $(document).ready(function () {
-//  $.$.ajax({
-//     method: "POST",
-//     url: "",
-//     data: "data",
-//     dataType: "dataType",
-//     success: function (response) {
-        
-//     }
-//  });   
-// });
-        
-    
-
+        $.ajax({
+            url: "../../article.php",
+            method: "POST",
+            data: {
+                articleName: articleName
+            },
+            success: function(data) {
+                $("#articlesContainer").html(data);
+            }
+        });
+    });
+});

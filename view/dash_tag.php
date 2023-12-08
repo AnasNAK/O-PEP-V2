@@ -1,14 +1,23 @@
 <?php
-include "../model/config.php";
-include 'session.php';
-
-$result = $mysqli->query("SELECT * FROM theme");
-$themes = $result->fetch_all(MYSQLI_ASSOC);
-
+    include '../model/config.php';
+    $result = $mysqli->query("SELECT * FROM theme");
+    $themes = $result->fetch_all(MYSQLI_ASSOC);
+    // echo'<pre>';
+    // var_dump($themes);die();
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        for ($i = 0; $i < count($_POST['theme']); $i++) {
+            $theme = $_POST['theme'][$i];
+            $nameTag = $_POST['nameTag'][$i];
+            $query = "INSERT INTO `tag`(`TagName`, `Themeid`) VALUES ('$nameTag',$theme)";
+            $stmt = $mysqli->prepare($query);
+                $stmt->execute();
+                $stmt->close();
+               
+                // header("Location: ../view/Singup2.php");
+           
+        }
+    }
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 
@@ -61,110 +70,20 @@ $themes = $result->fetch_all(MYSQLI_ASSOC);
             </div>
 
             <!-- tag form  -->
-            <div class="max-w-md w-full bg-white p-8 rounded shadow-md ml-[20%] mt-[7%]">
-                <div class="flex items-center mb-4">
-                    <img src="tag.svg" alt="icon" class="mr-2">
+            <section class="p-4 flex flex-col justify-center min-h-screen max-w-md mx-auto">
+                <div class="p-6 bg-sky-100 rounded">
+                    <div class="flex items-center justify-center font-black m-3 mb-12">
+                        <h1 class="tracking-wide text-3xl text-gray-900">Add tag</h1>
+                    </div>
+                    <form action="./dash_tag.php" method="POST" class="flex flex-col justify-center">
+                        <div id="addTagDiv" class="flex flex-col gap-3"></div> <!--div-->
+                        <button type="button" class="mb-4 mt-5 px-4 py-1.5 rounded-md shadow-lg bg-gradient-to-r from-pink-600 to-red-600 font-medium text-gray-100 block transition duration-300" onclick="removeAll()">Remove All Forms</button>
+
+                        <button class="mb-4 px-4 py-1.5 rounded-md shadow-lg bg-gradient-to-r from-pink-600 to-red-600 font-medium text-gray-100 block transition duration-300" id="newTag" type="button">Add New Form Tag</button>
+                        <input type="submit" class="px-4 py-1.5 rounded-md shadow-lg bg-gradient-to-r from-pink-600 to-red-600 font-medium text-gray-100 block transition duration-300" value="Save Tags">
+                    </form>
                 </div>
-
-                <div class="mb-4">
-                    <p class="text-gray-600">Press enter to add a tag</p>
-                    <ul>
-                        <input type="text" spellcheck="false" id="tagInput" class="border border-gray-300 p-2 w-full rounded focus:outline-none focus:border-blue-500">
-                    </ul>
-                </div>
-
-                <div>
-                    <label class="text-white dark:text-gray-200" for="passwordConfirmation">theme</label>
-                    <select name="theme" class=" w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring">
-                        <?php
-
-                        foreach ($themes  as $theme) { ?>
-
-                            <option value='<?php echo $category["IdTheme"]  ?>'><?= $category["ThemeName"] ?></option>
-                        <?php  } ?>
-
-                    </select>
-                </div>
-
-                <div class="mb-4 flex items-center">
-                    <button id="removeAllBtn" class="bg-red-500 text-white p-2 rounded hover:bg-red-600">
-                        Remove All
-                    </button>
-                    <button id="saveAllBtn" class="bg-green-500 text-white p-2 rounded hover:bg-green-600 ml-2">
-                        Save All
-                    </button>
-                </div>
-
-                <ul id="tagList" class="space-y-2">
-                </ul>
-            </div>
-
-            <script>
-                const ul = document.getElementById("tagList");
-                const input = document.getElementById("tagInput");
-                const categorySelect = document.getElementById("categorySelect");
-                const removeAllBtn = document.getElementById("removeAllBtn");
-                const saveAllBtn = document.getElementById("saveAllBtn");
-
-                let maxTags = Infinity;
-                let tags = [];
-                let selectedCategory = "all";
-
-                createTag();
-
-                function createTag() {
-                    ul.innerHTML = "";
-                    const filteredTags = selectedCategory === "all" ? tags : tags.filter(tag => tag.startsWith(selectedCategory));
-                    filteredTags.forEach(tag => {
-                        let liTag = `
-                            <li class="flex items-center bg-blue-200 p-2 rounded">
-                                <span>${tag}</span>
-                                <button class="ml-2 bg-red-500 text-white p-1 rounded" onclick="remove('${tag}')">Remove</button>
-                            </li>`;
-                        ul.insertAdjacentHTML("beforeend", liTag);
-                    });
-                }
-
-
-
-                function remove(tag) {
-                    tags = tags.filter(t => t !== tag);
-                    createTag();
-                }
-
-                function addTag(e) {
-                    if (e.key === "Enter") {
-                        let tag = e.target.value.trim();
-                        if (tag.length > 0 && !tags.includes(tag)) {
-                            tags.push(tag);
-                            createTag();
-                            e.target.value = "";
-                        }
-                    }
-                }
-
-                function removeAll() {
-                    tags = [];
-                    createTag();
-                }
-
-                function saveAll() {
-                    // Placeholder function to save the tags (adjust as needed)
-                    console.log("Tags to save:", tags);
-                }
-
-                function onCategoryChange() {
-                    selectedCategory = categorySelect.value;
-                    createTag();
-                }
-
-                input.addEventListener("keyup", addTag);
-                removeAllBtn.addEventListener("click", removeAll);
-                saveAllBtn.addEventListener("click", saveAll);
-                categorySelect.addEventListener("change", onCategoryChange);
-            </script>
-
-
+            </section>
 
             <!-- slider  -->
             <div class="fixed flex flex-col top-14 left-0 w-14 hover:w-64 md:w-64 bg-purple-900 h-full text-white transition-all duration-300 border-none z-10 sidebar">
@@ -209,8 +128,51 @@ $themes = $result->fetch_all(MYSQLI_ASSOC);
             </div>
         </div>
         </div>
+    <script>
+        const addTagDiv=document.getElementById('addTagDiv') //parent div
+        const newTag=document.getElementById('newTag') // btn to add new form to parent div
+        var form = `
+        <div  id="tagFormContainer">
+
+            <div class="tag-form bg-red-200 p-3 relative">
+               <button type="button" class="delete-button w-[20px] absolute  right-[5px] top-[15px]" onclick="removeTagForm(this)"><img src="../view/assets/images/remove.png"></button>
+                <label class="text-sm font-medium">Name Tag</label>
+                <input class="mb-3 px-2 py-1.5 mb-3 mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 focus:invalid:border-red-500 focus:invalid:ring-red-500" type="text" name="nameTag[]" placeholder="Tag" required>
+
+                <label class="text-sm font-medium">Theme</label>
+                <select name="theme[]" required class="mb-3 px-2 py-1.5 mb-3 mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 focus:invalid:border-red-500 focus:invalid:ring-red-500">
+                    <option value="">Select Theme</option>
+                    <?php foreach ($themes as $theme) {?>
+                        <option value="<?=$theme["IdTheme"]?>"><?=$theme["ThemeName"]?></option>
+                    <?php } ?>
+                </select>
+
+                
+            </div>
+    </div>`
+            
+      
+        newTag.addEventListener('click',()=>{
+            var formDiv = document.createElement('div');
+            formDiv.innerHTML = form;
+
+            addTagDiv.append(formDiv);
+        })
+        function removeTagForm(button) {
+            var tagForm = button.closest('.tag-form');
+            tagForm.remove();
+        }
+
+        function removeAll() {
+        var container = document.getElementById('addTagDiv');
+
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+    }
 
 
+    </script>
 </body>
 
 </html>

@@ -17,21 +17,32 @@ if ($userRole !== 'admin') {
 }
 
 $query = "SELECT * FROM Plant";
-$query1 = "SELECT* FROM theme";
 $result = $mysqli->query($query);
 $plants = $result->fetch_all(MYSQLI_ASSOC);
+$query1 = "SELECT* FROM theme";
 $result = $mysqli->query($query1);
+$themes = $result->fetch_all(MYSQLI_ASSOC);
+$query2 = "SELECT * FROM tag";
+$result = $mysqli->query($query2);
+$tags = $result->fetch_all(MYSQLI_ASSOC);
+$query3 = "SELECT theme.IdTheme , theme.ThemeName, theme.ThemeDesc, theme.ThemImg , GROUP_CONCAT(tag.TagName) AS TagNames
+FROM theme
+LEFT JOIN tag ON theme.IdTheme = tag.Themeid
+-- it specifies the tags instead of bringing them all
+GROUP BY theme.ThemeName, theme.ThemeDesc, theme.ThemImg";
+$result3 = $mysqli->query($query3);
+$tagtheme = $result3->fetch_all(MYSQLI_ASSOC);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePlant'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteTheme'])) {
     // Ensure the category ID to delete is set
-    if (isset($_POST['IdPlant'])) {
+    if (isset($_POST['IdTheme'])) {
         // Get the category ID to be deleted
-        $PlantIdToDelete = $_POST['IdPlant'];
+        $PlantIdToDelete = $_POST['IdTheme'];
 
         // Prepare the delete query and execute
-        $deleteQuery = "DELETE FROM Plant WHERE IdPlant = ?";
+        $deleteQuery = "DELETE FROM theme WHERE IdTheme = ?";
         $deleteStmt = $mysqli->prepare($deleteQuery);
-        $deleteStmt->bind_param('i', $PlantIdToDelete);
+        $deleteStmt->bind_param('i', $ThemeIdToDelete);
 
         // Execute the delete query
         if ($deleteStmt->execute()) {
@@ -133,12 +144,12 @@ $themeCount = $countThemesResult->fetch_assoc()['themeCount'];
     <div x-data="setup()" :class="{ 'dark': isDark }">
         <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased  ">
 
-            <div class="fixed w-full flex items-center  bg-purple-300 justify-between h-14 text-black z-10 gap-9 ">
-                <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 bg-purple-300">
+            <div class="fixed w-full flex items-center  bg-green-400 justify-between h-14 text-black z-10 gap-9 ">
+                <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 bg-green-400">
                     <!-- <img class="w-7 h-7 md:w-10 md:h-10 mr-2 rounded-md overflow-hidden" src="" /> -->
                     <span class="hidden md:block">ANAS NAKHLI</span>
                 </div>
-                <div class="flex items-center justify-around h-14 bg-purple-300  ">
+                <div class="flex items-center justify-around h-14 bg-green-400  ">
                     <ul class="flex justify-between">
                         <li>
                             <div class="block w-px h-6 mx-3 bg-gray-400 dark:bg-gray-700"></div>
@@ -160,7 +171,7 @@ $themeCount = $countThemesResult->fetch_assoc()['themeCount'];
                 </div>
             </div>
 
-            <div class="fixed flex flex-col top-14 left-0 w-14 hover:w-64 md:w-64 bg-purple-900 h-full text-white transition-all duration-300 border-none z-10 sidebar">
+            <div class="fixed flex flex-col top-14 left-0 w-14 hover:w-64 md:w-64 bg-green-900 h-full text-white transition-all duration-300 border-none z-10 sidebar">
                 <div class="overflow-y-auto overflow-x-hidden flex flex-col justify-between flex-grow">
                     <ul class="flex flex-col py-4 space-y-1">
                         <li class="px-5 hidden md:block">
@@ -235,7 +246,7 @@ $themeCount = $countThemesResult->fetch_assoc()['themeCount'];
                         <div class="bg-white p-4 shadow-lg rounded-lg ">
                             <div class="flex justify-between">
                                 <h1 class="font-bold text-base">THEMES</h1>
-                                <a href="addPlante.php" class="transition duration-300 hover:scale-150">
+                                <a href="addTheme.php" class="transition duration-300 hover:scale-150">
                                     <i class="bi bi-plus-circle "></i>
                                 </a>
                             </div>
@@ -254,12 +265,12 @@ $themeCount = $countThemesResult->fetch_assoc()['themeCount'];
                                                             </th>
                                                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                                                 <div class="flex cursor-pointer">
-                                                                    <span class="mr-2">Theme NAME</span>
+                                                                    <span class="mr-3">Theme NAME</span>
                                                                 </div>
                                                             </th>
                                                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                                                 <div class="flex cursor-pointer">
-                                                                    <span class="mr-2">Price</span>
+                                                                    <span class="mr-2">Description</span>
                                                                 </div>
                                                             </th>
                                                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
@@ -271,41 +282,60 @@ $themeCount = $countThemesResult->fetch_assoc()['themeCount'];
                                                     </thead>
 
                                                     <tbody class="bg-white divide-y divide-gray-200">
-                                                        <?php foreach ($plants as $plant) : ?>
+
+                                                        <?php
+                                                        foreach ($tagtheme as $theme) :  ?>
+
                                                             <tr>
                                                                 <td class="w-9">
-                                                                    <img src="<?php echo $plant['image']; ?>" alt="Plant Image">
+                                                                    <img src="./assets/images/<?php echo $theme['ThemImg']; ?>" alt="theme Image">
                                                                 </td>
                                                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                                                    <p><?php echo htmlspecialchars($plant['Name']); ?></p>
+                                                                    <p><?php echo htmlspecialchars($theme['ThemeName']); ?></p>
+
                                                                 </td>
                                                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
                                                                     <div class="flex text-[#685942]">
-                                                                        <p><?php echo htmlspecialchars($plant['price']); ?>
-                                                                            DH</p>
+                                                                        <p><?php echo htmlspecialchars($theme['ThemeDesc']); ?>
+                                                                        </p>
                                                                     </div>
                                                                 </td>
+
                                                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
                                                                     <div class="flex space-x-4">
-                                                                        <a href="editPlante.php?IdPlant=<?php echo $plant['IdPlant']; ?>" class="text-blue-500 hover:text-blue-600">
+                                                                        <a href="editTheme.php?IdTheme=<?php echo $theme['IdTheme']; ?>" class="text-blue-500 hover:text-blue-600">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                                             </svg>
                                                                             <p>Edit</p>
                                                                         </a>
                                                                         <form action="" method="POST">
-                                                                            <input type="hidden" name="IdPlant" value="<?php echo $plant['IdPlant']; ?>">
-                                                                            <button type="submit" name="deletePlant" class="text-red-500 hover:text-red-600">
-
+                                                                            <input type="hidden" name="IdTheme" value="<?php echo $theme['IdTheme']; ?>">
+                                                                            <button type="submit" name="deleteTheme" class="text-red-500 hover:text-red-600">
                                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                                                 </svg>
                                                                                 <p>Delete</p>
                                                                             </button>
                                                                         </form>
+
+
+                                                                    </div>
+                                                                    <div class="tagsdisplay flex justify-center"> <?php
+                                                                                                                    // Check if TagNames key is set in the array
+                                                                                                                    // if (isset($theme['TagNames'])) {
+                                                                                                                    // Display tags related to the current theme
+                                                                                                                    $tagNames = explode(',', $theme['TagNames']);
+                                                                                                                    foreach ($tagNames as $tagName) {
+                                                                                                                        echo $tagName . ' ';
+                                                                                                                    }
+                                                                                                                    // }
+                                                                                                                    ?>
                                                                     </div>
                                                                 </td>
+
                                                             </tr>
+
                                                         <?php endforeach; ?>
 
                                                     </tbody>
@@ -319,84 +349,13 @@ $themeCount = $countThemesResult->fetch_assoc()['themeCount'];
                     </div>
                 </div>
             </div>
-            <div class="h-full ml-14 mt-14 mb-10 md:ml-64">
 
 
-                <div class="col-span-12 mt-5 max-h-64 overflow-y-auto">
-                    <div class="grid gap-2 grid-cols-1 lg:grid-cols-1">
-                        <div class="bg-white p-4 shadow-lg rounded-lg ">
-                            <div class="flex justify-between position-fixed  ">
-                                <h1 class="font-bold text-base">Categorie</h1>
-                                <a href="addCategorie.php" class="transition duration-300 hover:scale-150">
-                                    <i class="bi bi-plus-circle "></i>
-                                </a>
-                            </div>
-                            <div class="mt-4">
-                                <div class="flex flex-col">
-                                    <div class="my-2 overflow-x-auto">
-                                        <div class="py-2 align-middle inline-block min-w-full">
-                                            <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg bg-white">
-                                                <table class="min-w-full divide-y divide-gray-200">
-                                                    <thead>
-                                                        <tr>
 
-                                                            <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                                                <div class="flex cursor-pointer">
-                                                                    <span class="mr-2">Categorie NAME</span>
-                                                                </div>
-                                                            </th>
-                                                            <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                                                <div class="flex cursor-pointer">
-                                                                    <span class="mr-2">ACTION</span>
-                                                                </div>
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
 
-                                                    <tbody class="bg-white divide-y divide-gray-200">
-                                                        <?php foreach ($categories as $category) : ?>
-                                                            <tr>
-                                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                                                    <p><?php echo htmlspecialchars($category['CategorieName']); ?>
-                                                                    </p>
-                                                                </td>
 
-                                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                                                    <div class="flex space-x-4">
-                                                                        <a href="editCategorie.php?IdCategorie=<?php echo $category['IdCategorie']; ?>" class="text-blue-500 hover:text-blue-600">
 
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                                            </svg>
-                                                                            <p>Edit</p>
-                                                                        </a>
-
-                                                                        <form action="" method="POST">
-                                                                            <input type="hidden" name="categoryId" value="<?php echo $category['IdCategorie']; ?>">
-                                                                            <button type="submit" name="deleteCategory" class="text-red-500 hover:text-red-600">
-
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                                </svg>
-                                                                                <p>Delete</p>
-                                                                            </button>
-                                                                        </form>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        <?php endforeach; ?>
-
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </div>
     </main>

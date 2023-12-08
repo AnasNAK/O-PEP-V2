@@ -7,8 +7,19 @@
     <title>Blog</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a4fc922de4.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 
 </head>
+<style>
+    /* Define custom styles for the checked checkbox */
+    #check1:checked+label .checked-icon {
+        display: block;
+        /* Change the color or add styling for the checked state */
+        color: white;
+        /* Change this to the color you prefer */
+    }
+</style>
 
 <body class="relative">
     <header class="header sticky top-0 bg-white z-10 shadow-md flex items-center justify-between px-8 py-02">
@@ -336,60 +347,97 @@
             </div>
         </form>
     </section>
-    <section class="grid grid-cols-3 gap-4">
-        <div class="min-h-screen  justify-center items-center ">
-            <div class="container flex justify-center ">
-                <div class="max-w-sm py-20 ">
-                    <div class=" relative shadow-lg hover:shadow-xl transition duration-500 rounded-lg bg-purple-100">
-                        <img class="rounded-t-lg w-2/4 h-[200px]" src="assets/images/png-7.png" />
-                        <div class="py-6 px-8 rounded-lg bg-purple-200">
-                            <h1 class="text-gray-700 font-bold text-2xl mb-3 hover:text-gray-900 hover:cursor-pointer">
-                                I'm
-                                supper plant for you.</h1>
-                            <p class="text-gray-700 tracking-wide">Lorem ipsum dolor sit amet consectetur, adipisicing
-                                elit.
-                                Eum, labore. Ea debitis beatae sequi deleniti.</p>
-                            <form class="pt-5" action="" method="POST">
-                                <button type="submit"
-                                    class="px-6 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
-                                    See More
-                                </button>
-                                <button type="submit"
-                                    class="px-6 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
-                                    Edit Article
-                                </button>
-                            </form>
+
+    <section>
+        <div
+            class="fixed flex flex-col top-14 right-0 w-1/4 hover:w-64 md:w-64 bg-purple-900 h-full  text-white transition-all duration-300 border-none z-1 sidebar">
+            <div class="p-9 overflow-y-auto overflow-x-hidden flex flex-col justify-between flex-grow">
+                <div class="flex items-center">
+                    <input type="checkbox" id="check1" class="hidden" />
+                    <label for="check1" class="cursor-pointer flex items-center">
+                        <div
+                            class="w-5 h-5 border border-gray-300 rounded-md flex-shrink-0 mr-2 focus-within:border-white">
+                            <!-- Use a visible icon for the checked state -->
+                            <svg class="w-3 h-3 hidden text-xl m-auto font-bold checked-icon" viewBox="0 0 20 20"
+                                fill="white" stroke="currentColor">
+                                <path d="M0 11l2-2 5 5L18 3l2 2L7 18z"></path>
+                            </svg>
                         </div>
-                        <div class="absolute top-2 right-2 py-2 px-4 bg-purple-200 rounded-lg">
-                            <div class="flex items-center mb-4">
+                        Checkbox Label
+                    </label>
+                </div>
 
-                                <div class="mr-2">
-                                    <i class="fas fa-thumbs-up text-blue-500 text-2xl cursor-pointer"></i>
+            </div>
+        </div>
+        <div class=" flex justify-evenly  w-[75%]">
+            <button class="transition  duration-300 hover:scale-150 absolute right-[25%]">
+                <i class="bi bi-plus-circle text-black font-bold text-xl "></i>
+            </button>
+            <div class="grid grid-cols-3  gap-4 ml-11 ">
+                <div class="container ">
+                    <div class="max-w-sm py-20   ">
+                        <div
+                            class=" relative shadow-lg hover:shadow-xl transition duration-500 rounded-lg bg-purple-100">
+                            <img class="rounded-t-lg w-2/4 h-[200px]" src="assets/images/png-7.png" />
+                            <div class="py-6 p-3 w-[100%] rounded-lg bg-purple-200">
+                                <h1
+                                    class="text-gray-700 font-bold text-2xl mb-3 hover:text-gray-900 hover:cursor-pointer">
+                                    I'm
+                                    supper plant for you.</h1>
+                                <p class="text-gray-700 tracking-wide">Lorem ipsum dolor sit amet consectetur,
+                                    adipisicing
+                                    elit.
+                                    Eum, labore. Ea debitis beatae sequi deleniti.</p>
+                                <form class="pt-5 flex flex-col justify-center gap-2 mr-3" action="" method="POST">
+                                    <button type="submit"
+                                        class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                        Delete
+                                    </button>
+                                    <div>
+
+                                        <button type="submit"
+                                            class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                            See&nbsp;More
+                                        </button>
+                                        <button type="submit"
+                                            class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                            Edit&nbsp;Article
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="absolute top-2 right-2 py-2 px-4 bg-purple-200 rounded-lg">
+                                <div class="flex items-center mb-4">
+
+                                    <div class="mr-2">
+                                        <i class="fas fa-thumbs-up text-blue-500 text-2xl cursor-pointer"></i>
+                                    </div>
+
+                                    <span class="text-sm">100</span>
                                 </div>
 
-                                <span class="text-sm">100</span>
-                            </div>
+                                <div class="flex items-center">
 
-                            <div class="flex items-center">
+                                    <div class="mr-2">
+                                        <i class="fas fa-thumbs-down text-red-500 text-2xl cursor-pointer"></i>
+                                    </div>
 
-                                <div class="mr-2">
-                                    <i class="fas fa-thumbs-down text-red-500 text-2xl cursor-pointer"></i>
+                                    <span class="text-sm">20</span>
                                 </div>
 
-                                <span class="text-sm">20</span>
                             </div>
-
                         </div>
                     </div>
                 </div>
+
+
             </div>
         </div>
-
     </section>
 
 
 
-    <footer class="bg-white">
+    <footer class="bg-white relative z-10">
         <div class="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
             <nav class="flex flex-wrap justify-center -mx-5 -my-2">
                 <ul class="flex items-center">

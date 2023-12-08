@@ -16,28 +16,96 @@ if ($userRole !== 'admin') {
     header("Location: SingIn.php");
 }
 
-// Count admins
-$countAdminsQuery = "SELECT COUNT(*) AS adminCount FROM user";
-$countAdminsResult = mysqli_query($mysqli, $countAdminsQuery);
-$adminCount = mysqli_fetch_assoc($countAdminsResult)['adminCount'];
+$query = "SELECT * FROM Plant";
+$query1 = "SELECT* FROM theme";
+$result = $mysqli->query($query);
+$plants = $result->fetch_all(MYSQLI_ASSOC);
+$result = $mysqli->query($query1);
 
-// Count articles
-$countArticlesQuery = "SELECT COUNT(*) AS articleCount FROM article";
-$countArticlesResult = mysqli_query($mysqli, $countArticlesQuery);
-$articleCount = mysqli_fetch_assoc($countArticlesResult)['articleCount'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePlant'])) {
+    // Ensure the category ID to delete is set
+    if (isset($_POST['IdPlant'])) {
+        // Get the category ID to be deleted
+        $PlantIdToDelete = $_POST['IdPlant'];
 
-// Fetch all articles
-$query = "SELECT * FROM article";
-$queryResult = mysqli_query($mysqli, $query);
+        // Prepare the delete query and execute
+        $deleteQuery = "DELETE FROM Plant WHERE IdPlant = ?";
+        $deleteStmt = $mysqli->prepare($deleteQuery);
+        $deleteStmt->bind_param('i', $PlantIdToDelete);
 
-// Fetch the results as an associative array
-// $queryResultArray = [];
-while ($row = mysqli_fetch_assoc($queryResult)) {
-    $articles[] = $row;
+        // Execute the delete query
+        if ($deleteStmt->execute()) {
+            // After successful deletion, redirect to refresh the page or perform other actions
+            header("Location: dashboard.php");
+            exit();
+        } else {
+            echo "Error deleting Plant.";
+        }
+    }
 }
 
-// Now $queryResultArray contains all the articles
+$query = "SELECT * FROM categorie";
+$result = $mysqli->query($query);
+$categories = $result->fetch_all(MYSQLI_ASSOC);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteCategory'])) {
+    if (isset($_POST['categoryId'])) {
+        $categoryIdToDelete = $_POST['categoryId'];
+
+        // Check if there are related records in the plant table
+        $checkQuery = "SELECT * FROM plant WHERE CategorieId = ?";
+        $checkStmt = $mysqli->prepare($checkQuery);
+        $checkStmt->bind_param('i', $categoryIdToDelete);
+        $checkStmt->execute();
+
+        $relatedPlants = $checkStmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        if (!empty($relatedPlants)) {
+            // Handle related records in the plant table before deleting the category
+            foreach ($relatedPlants as $plant) {
+                // Modify the column name 'PlantId' with the correct column name for the plant's identifier
+                $plantId = $plant['IdPlant'];
+
+                // Delete the related plant
+                $deletePlantQuery = "DELETE FROM plant WHERE IdPlant = ?";
+                $deletePlantStmt = $mysqli->prepare($deletePlantQuery);
+                $deletePlantStmt->bind_param('i', $plantId);
+                $deletePlantStmt->execute();
+
+                // Alternatively, you might perform updates on related plants here
+            }
+        }
+
+        // Proceed to delete the category after handling related records in the plant table
+        $deleteQuery = "DELETE FROM categorie WHERE IdCategorie = ?";
+        $deleteStmt = $mysqli->prepare($deleteQuery);
+        $deleteStmt->bind_param('i', $categoryIdToDelete);
+
+        if ($deleteStmt->execute()) {
+            // After successful deletion, redirect or perform other actions
+            header("Location: dashboard.php");
+            exit();
+        } else {
+            echo "Error deleting category.";
+        }
+    }
+}
+
+// Count plants
+$countPlantsQuery = "SELECT COUNT(*) AS plantCount FROM plant";
+$countPlantsResult = $mysqli->query($countPlantsQuery);
+$plantCount = $countPlantsResult->fetch_assoc()['plantCount'];
+
+// Count number of users with role admin
+$countAdminsQuery = "SELECT COUNT(*) AS adminCount FROM user WHERE roleId = 2";
+$countAdminsResult = $mysqli->query($countAdminsQuery);
+$adminCount = $countAdminsResult->fetch_assoc()['adminCount'];
+// count themes
+$countThemesQuery = "SELECT COUNT(*) AS themeCount FROM theme";
+$countThemesResult = $mysqli->query($countThemesQuery);
+$themeCount = $countThemesResult->fetch_assoc()['themeCount'];
 ?>
+
 
 
 
@@ -54,19 +122,20 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
     <title>
 
     </title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/style.css">
     <link rel="icon" type="image/png" href="" />
     <link rel="stylesheet" href="./public/css/style.css">
 </head>
 
-<body class="bg-purple-400 font-[sitika]">
+<body class=" font-[sitika]">
 
     <div x-data="setup()" :class="{ 'dark': isDark }">
         <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased  ">
 
             <div class="fixed w-full flex items-center  bg-purple-300 justify-between h-14 text-black z-10 gap-9 ">
                 <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 bg-purple-300">
-
+                    <!-- <img class="w-7 h-7 md:w-10 md:h-10 mr-2 rounded-md overflow-hidden" src="" /> -->
                     <span class="hidden md:block">ANAS NAKHLI</span>
                 </div>
                 <div class="flex items-center justify-around h-14 bg-purple-300  ">
@@ -100,14 +169,14 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
                             </div>
                         </li>
                         <li>
-                            <a href="dashboard.php" class="relative flex flex-row items-center h-11 focus:outline-none transition hover:bg-purple-300 hover:text-[#000000] text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-white pr-6">
+                            <a href="dash_article.php" class="relative flex flex-row items-center h-11 focus:outline-none transition hover:bg-purple-300 hover:text-[#000000] text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-white pr-6">
                                 <span class="inline-flex justify-center items-center ml-4">
                                     <svg class="w-5 h-5 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
                                         </path>
                                     </svg>
                                 </span>
-                                <span class="ml-2 text-sm tracking-wide truncate">plantes</span>
+                                <span class="ml-2 text-sm tracking-wide truncate">Dashboard</span>
                             </a>
                             <a href="dash_article.php" class="relative flex flex-row items-center h-11 focus:outline-none transition hover:bg-purple-300 hover:text-[#000000] text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-white pr-6">
                                 <span class="inline-flex justify-center items-center ml-4">
@@ -117,15 +186,14 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
                                 </span>
                                 <span class="ml-2 text-sm tracking-wide truncate">Articles</span>
                             </a>
-                            <a href="dash_tag.php" class="relative flex flex-row items-center h-11 focus:outline-none transition hover:bg-purple-300 hover:text-[#000000] text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-white pr-6">
+                            <a href="dashboardtheme.php" class="relative flex flex-row items-center h-11 focus:outline-none transition hover:bg-purple-300 hover:text-[#000000] text-white-600 hover:text-white-800 border-l-4 border-transparent hover:border-white pr-6">
                                 <span class="inline-flex justify-center items-center ml-4">
                                     <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512">
                                         <path d="M168 80c-13.3 0-24 10.7-24 24V408c0 8.4-1.4 16.5-4.1 24H440c13.3 0 24-10.7 24-24V104c0-13.3-10.7-24-24-24H168zM72 480c-39.8 0-72-32.2-72-72V112C0 98.7 10.7 88 24 88s24 10.7 24 24V408c0 13.3 10.7 24 24 24s24-10.7 24-24V104c0-39.8 32.2-72 72-72H440c39.8 0 72 32.2 72 72V408c0 39.8-32.2 72-72 72H72zM176 136c0-13.3 10.7-24 24-24h96c13.3 0 24 10.7 24 24v80c0 13.3-10.7 24-24 24H200c-13.3 0-24-10.7-24-24V136zm200-24h32c13.3 0 24 10.7 24 24s-10.7 24-24 24H376c-13.3 0-24-10.7-24-24s10.7-24 24-24zm0 80h32c13.3 0 24 10.7 24 24s-10.7 24-24 24H376c-13.3 0-24-10.7-24-24s10.7-24 24-24zM200 272H408c13.3 0 24 10.7 24 24s-10.7 24-24 24H200c-13.3 0-24-10.7-24-24s10.7-24 24-24zm0 80H408c13.3 0 24 10.7 24 24s-10.7 24-24 24H200c-13.3 0-24-10.7-24-24s10.7-24 24-24z" />
                                     </svg>
                                 </span>
-                                <span class="ml-2 text-sm tracking-wide truncate">Tags</span>
+                                <span class="ml-2 text-sm tracking-wide truncate">Themes</span>
                             </a>
-                            
                         </li>
 
                     </ul>
@@ -134,12 +202,10 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
             </div>
             <!-- ./Sidebar -->
 
-
-
             <div class="h-full ml-14 mt-14 mb-10 md:ml-64">
 
                 <div class="grid grid-cols-1  sm:grid-cols-2 gap-9 lg:grid-cols-2 p-4 lg:gap-32 ">
-                    <div class="bg-purple-900 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-purple-300 text-white">
+                    <div class="bg-slate-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-purple-300 text-white">
                         <div class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
                             <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="stroke-current text-black transform transition-transform duration-500 ease-in-out">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
@@ -151,15 +217,15 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
                             <p>Admins</p>
                         </div>
                     </div>
-                    <div class="bg-purple-900 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-purple-300 text-white font-medium group">
+                    <div class="bg-slate-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-purple-300 text-white font-medium group">
                         <div class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
                             <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="stroke-current text-black transform transition-transform duration-500 ease-in-out">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                             </svg>
                         </div>
                         <div class="text-right">
-                            <p class="text-2xl"><?php echo $articleCount; ?></p>
-                            <p>Articles</p>
+                            <p class="text-2xl"><?php echo $themeCount; ?></p>
+                            <p>THEMES</p>
                         </div>
                     </div>
 
@@ -167,9 +233,11 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
                 <div class="col-span-12 mt-5 max-h-64 overflow-y-auto">
                     <div class="grid gap-2 grid-cols-1 lg:grid-cols-1">
                         <div class="bg-white p-4 shadow-lg rounded-lg ">
-                            <div class="flex justify-between ">
-                                <h1 class="font-bold text-base">Articles</h1>
-
+                            <div class="flex justify-between">
+                                <h1 class="font-bold text-base">THEMES</h1>
+                                <a href="addPlante.php" class="transition duration-300 hover:scale-150">
+                                    <i class="bi bi-plus-circle "></i>
+                                </a>
                             </div>
                             <div class="mt-4">
                                 <div class="flex flex-col">
@@ -181,17 +249,17 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
                                                         <tr>
                                                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                                                 <div class="flex cursor-pointer">
-                                                                    <span class="mr-2">Article img</span>
+                                                                    <span class="mr-2">theme img</span>
                                                                 </div>
                                                             </th>
                                                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                                                 <div class="flex cursor-pointer">
-                                                                    <span class="mr-2">Article NAME</span>
+                                                                    <span class="mr-2">Theme NAME</span>
                                                                 </div>
                                                             </th>
                                                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                                                 <div class="flex cursor-pointer">
-                                                                    <span class="mr-2">Status</span>
+                                                                    <span class="mr-2">Price</span>
                                                                 </div>
                                                             </th>
                                                             <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
@@ -203,31 +271,30 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
                                                     </thead>
 
                                                     <tbody class="bg-white divide-y divide-gray-200">
-                                                        <?php foreach ($articles as $article) {   ?>
-
+                                                        <?php foreach ($plants as $plant) : ?>
                                                             <tr>
                                                                 <td class="w-9">
-                                                                    <img src="assets/images/<?php echo $article['ArticleImg']; ?>" alt="article Image">
+                                                                    <img src="<?php echo $plant['image']; ?>" alt="Plant Image">
                                                                 </td>
                                                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
-                                                                    <p><?php echo $article['ArticleName'];
-                                                                        ?></p>
+                                                                    <p><?php echo htmlspecialchars($plant['Name']); ?></p>
                                                                 </td>
                                                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
                                                                     <div class="flex text-[#685942]">
-                                                                        <p>
-                                                                        <div class="flex items-center mb-4">
-                                                                            <input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                                                            <label for="default-checkbox" class="ms-2 text-sm font-medium text-black ">Check to Display</label>
-                                                                        </div>
-                                                                        </p>
+                                                                        <p><?php echo htmlspecialchars($plant['price']); ?>
+                                                                            DH</p>
                                                                     </div>
                                                                 </td>
                                                                 <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
                                                                     <div class="flex space-x-4">
-
+                                                                        <a href="editPlante.php?IdPlant=<?php echo $plant['IdPlant']; ?>" class="text-blue-500 hover:text-blue-600">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                            </svg>
+                                                                            <p>Edit</p>
+                                                                        </a>
                                                                         <form action="" method="POST">
-                                                                            <input type="hidden" name="IdPlant" value="">
+                                                                            <input type="hidden" name="IdPlant" value="<?php echo $plant['IdPlant']; ?>">
                                                                             <button type="submit" name="deletePlant" class="text-red-500 hover:text-red-600">
 
                                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -239,7 +306,7 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                        <?php } ?>
+                                                        <?php endforeach; ?>
 
                                                     </tbody>
                                                 </table>
@@ -252,14 +319,90 @@ while ($row = mysqli_fetch_assoc($queryResult)) {
                     </div>
                 </div>
             </div>
+            <div class="h-full ml-14 mt-14 mb-10 md:ml-64">
 
 
+                <div class="col-span-12 mt-5 max-h-64 overflow-y-auto">
+                    <div class="grid gap-2 grid-cols-1 lg:grid-cols-1">
+                        <div class="bg-white p-4 shadow-lg rounded-lg ">
+                            <div class="flex justify-between position-fixed  ">
+                                <h1 class="font-bold text-base">Categorie</h1>
+                                <a href="addCategorie.php" class="transition duration-300 hover:scale-150">
+                                    <i class="bi bi-plus-circle "></i>
+                                </a>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex flex-col">
+                                    <div class="my-2 overflow-x-auto">
+                                        <div class="py-2 align-middle inline-block min-w-full">
+                                            <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg bg-white">
+                                                <table class="min-w-full divide-y divide-gray-200">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                <div class="flex cursor-pointer">
+                                                                    <span class="mr-2">Categorie NAME</span>
+                                                                </div>
+                                                            </th>
+                                                            <th class="px-6 py-3 bg-gray-50 text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                                                <div class="flex cursor-pointer">
+                                                                    <span class="mr-2">ACTION</span>
+                                                                </div>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody class="bg-white divide-y divide-gray-200">
+                                                        <?php foreach ($categories as $category) : ?>
+                                                            <tr>
+                                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                                                    <p><?php echo htmlspecialchars($category['CategorieName']); ?>
+                                                                    </p>
+                                                                </td>
+
+                                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5">
+                                                                    <div class="flex space-x-4">
+                                                                        <a href="editCategorie.php?IdCategorie=<?php echo $category['IdCategorie']; ?>" class="text-blue-500 hover:text-blue-600">
+
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                            </svg>
+                                                                            <p>Edit</p>
+                                                                        </a>
+
+                                                                        <form action="" method="POST">
+                                                                            <input type="hidden" name="categoryId" value="<?php echo $category['IdCategorie']; ?>">
+                                                                            <button type="submit" name="deleteCategory" class="text-red-500 hover:text-red-600">
+
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                                </svg>
+                                                                                <p>Delete</p>
+                                                                            </button>
+                                                                        </form>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     </main>
     </div>
     </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
 </body>
 
 </html>

@@ -10,7 +10,7 @@ if ($userRole === 'blocked') {
     exit();
 }
 if ($userRole !== 'admin') {
-    header("Location: SingIn.php");// Redirect if not an admin
+    header("Location: SingIn.php");
 }
 
 // Initialize an error message variable
@@ -72,8 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/a4fc922de4.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
@@ -91,22 +90,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div class="grid grid-cols-1 gap-1 mt-4 sm:grid-cols-2">
                 <div>
                     <label class="font-bold" for="name">Category Name</label>
-                    <input id="name" name="catname"
-                        value="<?php echo ($categoryName); ?>" type="text"
-                        class="block w-full px-4 py-2 mt-2 text-gray-400 bg-white border border-[#685942] rounded-md focus:border-[#685942] focus:outline-none focus:ring">
+                    <input id="name" name="catname" value="<?php echo ($categoryName); ?>" type="text" class="block w-full px-4 py-2 mt-2 text-gray-400 bg-white border border-[#685942] rounded-md focus:border-[#685942] focus:outline-none focus:ring">
                     <span class="font-bold text-orange-400"></span>
                 </div>
             </div>
             <div class="flex gap-6">
-                    <button type="submit" class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">
-                        Save
+                <button type="submit" class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">
+                    Save
+                </button>
+                <a href="dashboard.php">
+                    <button type="button" class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">
+                        Cancel
                     </button>
-                    <a href="dashboard.php">
-                        <button type="button" class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">
-                            Cancel
-                        </button>
-                    </a>
-                </div>
+                </a>
+            </div>
         </form>
     </section>
 </body>

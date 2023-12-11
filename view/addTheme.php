@@ -14,15 +14,15 @@ if ($userRole !== 'admin') {
 }
 
 // Fetch categories data from the database
-$query = "SELECT * FROM categorie"; // Replace 'categories' with your table name
-$result = $mysqli->query($query);
-$categories = $result->fetch_all(MYSQLI_ASSOC);
+// $query = "SELECT * FROM categorie"; // Replace 'categories' with your table name
+// $result = $mysqli->query($query);
+// $categories = $result->fetch_all(MYSQLI_ASSOC);
 
 // Handling form submission to add a plant
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Retrieve form data
     $plantName = $_POST['name'];
-    $plantPrice = $_POST['price'];
+    
     $categoryId = $_POST['category']; // Assuming 'category' is your category select field
 
     // Handle image upload
@@ -68,6 +68,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/a4fc922de4.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
+    <link href="/dist/output.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="icon" type="image/png" href="../public/img/logo-1.png" />
@@ -83,13 +85,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <div class="form-group mb-6">
                     <input type="text" name="name" class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" placeholder="Theme Name">
                 </div>
-                <!-- tags checklist to chnage their hidden status  start -->
-                <div class="flex items-center">
-                    <input checked id="checked-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                    <label for="checked-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Checked state</label>
-                </div>
-                <!-- tags checklist to chnage their hidden status  -->
-                <div class="form-group mb-6 mt-6 w-full">
+
+
+                <label for="message" class="block mb-2 text-4xl font-bold  text-black ">Description</label>
+                <textarea id="message" rows="4" class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" placeholder="Write your thoughts here..."></textarea>
+
+                <!-- <div class="form-group mb-6 mt-6 w-full">
                     <select name="category" class="w-full p-2 rounded-md bg-white text-black">
                         <option value="">Category</option>
 
@@ -98,8 +99,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                 <?php echo $category['CategorieName']; ?></option>
                         <?php endforeach; ?>
                     </select>
-                </div>
-                <div class="form-group mb-6 w-full">
+                </div> -->
+                <div class="form-group mb-6 mt-6 w-full">
                     <input type="file" name="image" class="block">
                 </div>
                 <hr class="border-2 my-4">
@@ -114,6 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
         </form>
     </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
 </body>
 
 </html>

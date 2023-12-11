@@ -9,9 +9,7 @@ if ($userRole === 'blocked') {
     header("Location: block-page.php");
     exit();
 }
-if ($userRole !== 'admin') {
-    header("Location: SingIn.php");
-}
+
 
 $themeId = $_GET['IdTheme'];
 
@@ -21,11 +19,11 @@ $stmtTags->bind_param('i', $themeId);
 $stmtTags->execute();
 $tagsForTheme = $stmtTags->get_result()->fetch_all(MYSQLI_ASSOC);
 
-// $query3 = "SELECT theme.IdTheme , theme.ThemeName, theme.ThemeDesc, theme.ThemImg ,tag.Themeid,Tag.tagSt, GROUP_CONCAT(tag.TagName) AS TagNames
-// FROM theme
-// LEFT JOIN tag ON theme.IdTheme = tag.Themeid";
-// $result3 = $mysqli->query($query3);
-// $tagtheme = $result3->fetch_all(MYSQLI_ASSOC);
+$query3 = "SELECT theme.IdTheme , theme.ThemeName, theme.ThemeDesc, theme.ThemImg ,tag.Themeid,Tag.tagSt, GROUP_CONCAT(tag.TagName) AS TagNames
+FROM theme
+LEFT JOIN tag ON theme.IdTheme = tag.Themeid";
+$result3 = $mysqli->query($query3);
+$tagtheme = $result3->fetch_all(MYSQLI_ASSOC);
 
 $queryTags2 = "SELECT * FROM tag WHERE Themeid = ?";
 $stmtTags2 = $mysqli->prepare($queryTags2);
@@ -44,7 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['IdTheme'])) {
     $result = $stmt->get_result();
     $theme = $result->fetch_assoc();
 
-  
+    // Fetch categories data from the database
+    // $queryCategories = "SELECT * FROM tag";
+    // $resultCategories = $mysqli->query($queryCategories); 
+    // $categories = $resultCategories->fetch_all(MYSQLI_ASSOC);
 
     // Check if a plant with the specified ID exists
     if ($themeId) {
@@ -61,7 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateTheme'])) {
     if (isset($_POST['tagstatusoff']) && is_array($_POST['tagstatusoff'])) {
 
         foreach ($_POST['tagstatusoff'] as $tagId) {
-            if()
             $updatestatus = "UPDATE tag SET TagSt = 1 WHERE idTag = ?";
 
             $Upstmt = $mysqli->prepare($updatestatus);

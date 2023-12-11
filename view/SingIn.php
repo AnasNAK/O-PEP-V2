@@ -16,7 +16,7 @@
             <div>
                 <h1 class="text-white font-bold text-4xl font-sans">O'PEP</h1>
                 <p class="text-white mt-1">If You don't Have An Acount Go to Sing UP </p>
-                <a href="SingUp.php">
+                <a href="./Singup.php">
                     <button type="submit" class="block w-28 bg-white text-indigo-800 mt-4 py-2 rounded-2xl font-bold mb-2">Sing Up</button>
                 </a>
             </div>

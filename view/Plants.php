@@ -69,7 +69,7 @@ function fetchPlantsByName($mysqli, $plantName) {
 
     // Build the query with the plant name condition
     $query = "SELECT * FROM plant";
-
+ 
     if (!empty($plantName)) {
         $query .= " WHERE Name LIKE ?";
     }

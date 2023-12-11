@@ -176,16 +176,43 @@ include "../controller/crud_article.php";
 
     </section>
     <section class="mt-5">
-        <form action="" method="POST">
-            <div class="max-w-xl m-auto mb-5">
-                <div class="flex space-x-4">
-                    <div class="flex rounded-md overflow-hidden w-full">
-                        <input id="LiveSearch" name="article_name" type="text" placeholder="Article name" class="pl-2 w-full bg-purple-300 font-bold rounded-md rounded-r-none placeholder-black" />
-                    </div>
+    <form id="searchForm" action="article_SBar.php" method="POST">
+        <div class="max-w-xl m-auto mb-5">
+            <div class="flex space-x-4">
+                <div class="flex rounded-md overflow-hidden w-full">
+                    <input id="LiveSearch" name="article_name" type="text" placeholder="Article name" class="pl-2 w-full bg-purple-300 font-bold rounded-md rounded-r-none placeholder-black" />
                 </div>
             </div>
-        </form>
-    </section>
+        </div>
+    </form>
+    <div id="Searchresult" style="display: none;"></div>
+    <script>
+        $(document).ready(function() {
+            $("#LiveSearch").keyup(function() {
+                var input = $(this).val();
+                // alert(input);
+                if (input != "") {
+                    $.ajax({
+                        url: "article_SBar.php",
+                        method: "POST",
+                        data: {
+                            input: input
+                        },
+                        success: function(data) {
+                            
+                            $("#Searchresult").html(data);
+                            $("#Searchresult").css("display", "block");
+                        }
+                    });
+                } else {
+                    $("#Searchresult").css("display", "none");
+                }
+            });
+        });
+    </script>
+</section>
+
+    
 
 
 
@@ -228,11 +255,9 @@ include "../controller/crud_article.php";
                 ?>
 
                     <div class="container ">
-                        <div id="resultat">
+                    
 
-                        </div>
-
-                        <div id="old">
+                       
                             <div id="ok" class="max-w-sm py-20   ">
                                 <div class=" relative shadow-lg hover:shadow-xl transition duration-500 rounded-lg bg-purple-100">
                                     <img class="rounded-t-lg w-2/4 h-[200px]" src="assets/images/<?php echo $row['ArticleImg']; ?>" />
@@ -284,7 +309,7 @@ include "../controller/crud_article.php";
                                 </div>
                             </div>
 
-                        </div>
+                       
                     </div>
             </div>
             <?php  ?>
@@ -361,7 +386,7 @@ include "../controller/crud_article.php";
 
 
 
-    <script src="../view/assets/javascript/ajax.js"></script>
+   
 </body>
 
 </html>

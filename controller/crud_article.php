@@ -46,24 +46,24 @@ $user_id = $x['IdUser'];
             }
         }
         
-            $query1 = "SELECT idArticle FROM article WHERE ArticleName = ?";
+        //     $query1 = "SELECT idArticle FROM article WHERE ArticleName = ?";
             
 
-            $stmt = $mysqli->prepare($query);
-            $stmt->bind_param('s', $title);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $x = mysqli_fetch_assoc($result);
-            $idArticle = $x['idArticle'];
-            $tags = $_POST['tags'];
-            $tags = is_array($_POST['tags']) ? $_POST['tags'] : [];
-            foreach($tags as $tag){
-                $query = "INSERT INTO art_tag (ArticleId, TagID) VALUES (?, ?)";
-                $stmt = $mysqli->prepare($query);
-                $stmt->bind_param('ii',$idArticle,$tag,);
-                $stmt->execute();
+        //     $stmt = $mysqli->prepare($query);
+        //     $stmt->bind_param('s', $title);
+        //     $stmt->execute();
+        //     $result = $stmt->get_result();
+        //     $x = mysqli_fetch_assoc($result);
+        //     $idArticle = $x['idArticle'];
+        //     $tags = $_POST['tags'];
+        //     $tags = is_array($_POST['tags']) ? $_POST['tags'] : [];
+        //     foreach($tags as $tag){
+        //         $query = "INSERT INTO art_tag (ArticleId, TagID) VALUES (?, ?)";
+        //         $stmt = $mysqli->prepare($query);
+        //         $stmt->bind_param('ii',$idArticle,$tag,);
+        //         $stmt->execute();
             
-        }
+        // }
     
     
 }

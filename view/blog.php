@@ -1,5 +1,5 @@
 <?php
-include 'session.php';
+include './session.php';
 
 // Check user session and retrieve the role
 $userRole = checkUserSession($mysqli);
@@ -36,11 +36,19 @@ $themes = $result->fetch_all(MYSQLI_ASSOC);
 $query2 = "SELECT * FROM tag";
 $result = $mysqli->query($query2);
 $tags = $result->fetch_all(MYSQLI_ASSOC);
-$query3 = "SELECT theme.IdTheme , theme.ThemeName, theme.ThemeDesc, theme.ThemImg , GROUP_CONCAT(tag.TagName) AS TagNames
-FROM theme
-LEFT JOIN tag ON theme.IdTheme = tag.Themeid
--- it specifies the tags instead of bringing them all
-GROUP BY theme.ThemeName, theme.ThemeDesc, theme.ThemImg";
+$query3 = "SELECT
+theme.IdTheme,
+theme.ThemeName,
+theme.ThemeDesc,
+theme.ThemImg,
+GROUP_CONCAT(tag.TagName) AS TagNames
+FROM
+theme
+LEFT JOIN
+tag ON theme.IdTheme = tag.Themeid
+GROUP BY
+theme.IdTheme, theme.ThemeName, theme.ThemeDesc, theme.ThemImg;
+";
 $result3 = $mysqli->query($query3);
 $tagtheme = $result3->fetch_all(MYSQLI_ASSOC);
 ?>

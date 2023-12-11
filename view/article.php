@@ -1,5 +1,6 @@
 <?php
 include "../controller/crud_article.php";
+include "../model/config.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -423,7 +424,7 @@ include "../controller/crud_article.php";
                        
                             <div id="ok" class="max-w-sm py-20   ">
                                 <div class=" relative shadow-lg hover:shadow-xl transition duration-500 rounded-lg bg-purple-100">
-                                    <img class="rounded-t-lg w-2/4 h-[200px]" src="assets/images/<?php echo $row['ArticleImg']; ?>" />
+                                    <img class="rounded-t-lg w-2/4 h-[200px]" src="<?php echo $row['ArticleImg']; ?>" />
                                     <div class="py-6 p-3 w-[100%] rounded-lg bg-purple-200">
                                         <h1 class="text-gray-700 font-bold text-2xl mb-3 hover:text-gray-900 hover:cursor-pointer">
                                             <?php echo $row['ArticleName']; ?>
@@ -433,8 +434,8 @@ include "../controller/crud_article.php";
                                             echo $row['ArticleDes'];
                                             ?>
                                         </p>
-                                        <form class="pt-5 flex flex-col justify-center gap-2 mr-3" action="" method="POST">
-                                            <button type="submit" class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                        <form class="pt-5 flex flex-col justify-center gap-2 mr-3" action="../controller/crud_article.php" method="POST">
+                                            <button type="submit" name="deleteArticle" class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
                                                 Delete
                                             </button>
                                             <div>
@@ -584,21 +585,26 @@ include "../controller/crud_article.php";
                         <!-- tags checklist to chnage their hidden status  -->
                         <div class="form-group mb-6 mt-6 w-full">
                         <?php
-                        //$id = $_GET['idTheme'];
-                        $request = "SELECT * FROM tag WHERE Themeid = 1";
+                        
+                        $email = $_SESSION['user_email'];
+                        $id = $_GET['IdTheme'];
+                    
+                        $request = "SELECT * FROM tag WHERE Themeid = '$id'";
                         $exec = mysqli_query($mysqli,$request);
                         $results = mysqli_fetch_all($exec,MYSQLI_ASSOC);
                         foreach($results as $result){
                         ?>
                         
                             <div class="flex items-center">
-                                <input checked id="checked-checkbox" type="checkbox" value=""
+                                <input   checked id="checked-checkbox" type="checkbox" value="<?php echo $result['idTag']; ?>"
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                <label for="checked-checkbox"
+                                <label name="tags[]"  for="checked-checkbox"
                                     class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><?php echo $result['TagName']; ?></label>
                             </div>
                             <?php
                             }
+
+                           
                             ?>
                      
 

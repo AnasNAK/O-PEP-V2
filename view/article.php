@@ -569,12 +569,12 @@ include "../controller/crud_article.php";
                 <form action="" method="POST" enctype="multipart/form-data">
                     <div id="formInp">
                         <div class="form-group mb-6">
-                            <input type="text" name="name"
+                            <input type="text" name="ArticleName"
                                 class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                 placeholder="Article Name">
                         </div>
                         <div class="form-group mb-6">
-                            <textarea type="text" name="description"
+                            <textarea type="text" name="ArticleDes"
                                 class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                 placeholder="descriptionn">
                                </textarea>
@@ -583,14 +583,23 @@ include "../controller/crud_article.php";
                     
                         <!-- tags checklist to chnage their hidden status  -->
                         <div class="form-group mb-6 mt-6 w-full">
-
-                          
+                        <?php
+                        //$id = $_GET['idTheme'];
+                        $request = "SELECT * FROM tag WHERE Themeid = 1";
+                        $exec = mysqli_query($mysqli,$request);
+                        $results = mysqli_fetch_all($exec,MYSQLI_ASSOC);
+                        foreach($results as $result){
+                        ?>
+                        
                             <div class="flex items-center">
                                 <input checked id="checked-checkbox" type="checkbox" value=""
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="checked-checkbox"
-                                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><?php echo 'tag name'; ?></label>
+                                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><?php echo $result['TagName']; ?></label>
                             </div>
+                            <?php
+                            }
+                            ?>
                      
 
                         </div>
@@ -601,7 +610,7 @@ include "../controller/crud_article.php";
                     </div>
                     <div class="flex justify-between mt-6">
                         <div class="flex gap-6">
-                            <button type="submit"
+                            <button name="addArticle" type="submit"
                                 class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">Save</button>
                             <a href="article.php">
                                 <button type="button"

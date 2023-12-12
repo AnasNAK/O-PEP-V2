@@ -32,7 +32,7 @@ if (isset($_POST['addArticle'])) {
     $imageTempName = $uploadedImage['tmp_name'];
     $author = $user_id;
     $id = $_POST['id_theme'];
-   
+
 
 
     // Check if the form fields are not empty
@@ -46,7 +46,7 @@ if (isset($_POST['addArticle'])) {
             $insertQuery = "INSERT INTO article (ArticleName, ArticleDes, ArticleImg, UserID, ThemeId) VALUES (?, ?, ?, ?, ?)";
             $insertStmt = $mysqli->prepare($insertQuery);
             $insertStmt->bind_param('ssssi', $title, $content, $imagePath, $author, $id);
-            
+
             if ($insertStmt->execute()) {
                 // Article inserted successfully
 
@@ -61,12 +61,14 @@ if (isset($_POST['addArticle'])) {
 
                 // Insert tags
                 $tags = $_POST['tags'];
-                $query2 = "INSERT INTO art_tag (ArticleId, TagID) VALUES (?, ?)";
-                $stmt = $mysqli->prepare($query2);
-                $stmt->bind_param('ii', $idArticle, $tags);
-                $stmt->execute();
-                header("location:../view/article.php");
-                
+                foreach ($tags as $tag) {
+                    $query2 = "INSERT INTO art_tag (ArticleId, TagID) VALUES (?, ?)";
+                    $stmt = $mysqli->prepare($query2);
+                    $stmt->bind_param('ii', $idArticle, $tag);
+                    $stmt->execute();
+                    header("location:../view/article.php");
+                }
+
                 // Additional logic or redirection can be added here
             } else {
                 // Error handling for article insertion failure
@@ -88,28 +90,27 @@ if (isset($_POST['modifyArticle'])) {
     $id = $_POST['id'];
     $title = $_POST['ArticleName'];
     $content = $_POST['ArticleDes'];
-    $uploadedImage = $_FILES['image']; 
+    $uploadedImage = $_FILES['image'];
     $imageName = $uploadedImage['name'];
-    $imageTempName = $uploadedImage['tmp_name'];   
+    $imageTempName = $uploadedImage['tmp_name'];
     $author = $x['IdUser'];
     if (!empty($imageName)) {
         // Generate a unique name for the uploaded image to avoid conflicts
         $imagePath = $uploadDir . uniqid() . '_' . $imageName;
-    
+
         // Move the uploaded file to the specified directory
         if (move_uploaded_file($imageTempName, $imagePath)) {
             // File uploaded successfully, proceed to insert plant data into the database
             $insertQuery = "UPDATE article SET ArticleName = ?, ArticleDes = ?, ArticleImg = ?,UserID = ? WHERE idArticle = ?";
             $insertStmt = $mysqli->prepare($insertQuery);
-            $insertStmt->bind_param('sssii', $title, $content, $imagePath,$author,$id);
+            $insertStmt->bind_param('sssii', $title, $content, $imagePath, $author, $id);
         }
     }
 }
-if(isset($_POST['deleteArticle'])){
+if (isset($_POST['deleteArticle'])) {
     $id = $_POST['id'];
     $query = "DELETE FROM article WHERE idArticle = ?";
     $stmt = $mysqli->prepare($query);
     $stmt->bind_param('i', $id);
     $stmt->execute();
 }
-

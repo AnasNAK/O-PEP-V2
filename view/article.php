@@ -417,7 +417,7 @@ include "../controller/crud_article.php";
 
                 ?>
 
-                    <div class="container ">
+                    <div class="container " id="article-pagination">
                     
 
                        
@@ -614,6 +614,21 @@ include "../controller/crud_article.php";
         </div>
     </div>
     <script src="assets/js/article.js"></script>
+
+    <script>
+        $document.ready(function () {
+            function load_data(page) {
+                $.ajax({
+                    url: "article-pagination.php",
+                    method: "POST",
+                    data:{page:page},
+                    success: function (data){
+                        $('#article-pagination').html(data);
+                    }
+                })
+            }
+        })
+    </script>
 
 </body>
 

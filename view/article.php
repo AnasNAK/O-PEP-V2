@@ -567,7 +567,7 @@ include "../model/config.php";
         <div class="flex items-center justify-center min-h-screen">
             <section class="max-w-4xl p-6 mx-auto bg-purple-400 rounded-md shadow-md my-7">
                 <h1 class="text-4xl font-bold capitalize ">Add Article</h1>
-                <form action="" method="POST" enctype="multipart/form-data">
+                <form action="../controller/crud_article.php" method="POST" enctype="multipart/form-data">
                     <div id="formInp">
                         <div class="form-group mb-6">
                             <input type="text" name="ArticleName"
@@ -596,9 +596,9 @@ include "../model/config.php";
                         ?>
                         
                             <div class="flex items-center">
-                                <input   checked id="checked-checkbox" type="checkbox" value="<?php echo $result['idTag']; ?>"
+                                <input name="tags[]" checked id="checked-checkbox" type="checkbox" value="<?php echo $result['idTag']; ?>"
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                <label name="tags[]"  for="checked-checkbox"
+                                <label   for="checked-checkbox"
                                     class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><?php echo $result['TagName']; ?></label>
                             </div>
                             <?php
@@ -623,6 +623,7 @@ include "../model/config.php";
                                     class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">Cancel</button>
                             </a>
                         </div>
+                        <input hidden type="text" name="id_theme" value="<?php echo $id ?>">
                     </div>
                 </form>
             </section>

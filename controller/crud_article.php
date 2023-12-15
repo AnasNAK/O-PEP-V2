@@ -35,9 +35,9 @@ if (isset($_POST['addArticle'])) {
 
 
 
-    // Check if the form fields are not empty
+
     if (!empty($title) && !empty($content) && !empty($uploadedImage)) {
-        // Generate a unique name for the uploaded image to avoid conflicts
+
         $imagePath = $uploadDir . uniqid() . '_' . $imageName;
 
         // Move the uploaded file to the specified directory
@@ -68,18 +68,16 @@ if (isset($_POST['addArticle'])) {
                     $stmt->execute();
                     header("location:../view/article.php");
                 }
-
-                // Additional logic or redirection can be added here
             } else {
-                // Error handling for article insertion failure
+
                 echo "Error: " . $mysqli->error;
             }
         } else {
-            // Error handling for file upload failure
+
             echo "Error: File upload failed.";
         }
     } else {
-        // Error handling for empty form fields
+
         echo "Error: All form fields are required.";
     }
 }
@@ -87,30 +85,68 @@ if (isset($_POST['addArticle'])) {
 // modifying an article    
 
 if (isset($_POST['modifyArticle'])) {
-    $id = $_POST['id'];
-    $title = $_POST['ArticleName'];
-    $content = $_POST['ArticleDes'];
+
+    // Assuming $mysqli is your database connection
+    $article_id = $_POST['article_id'];
+
+    $title = $_POST['name'];
+    $content = $_POST['description'];
     $uploadedImage = $_FILES['image'];
     $imageName = $uploadedImage['name'];
     $imageTempName = $uploadedImage['tmp_name'];
     $author = $x['IdUser'];
+
+
+
     if (!empty($imageName)) {
         // Generate a unique name for the uploaded image to avoid conflicts
         $imagePath = $uploadDir . uniqid() . '_' . $imageName;
 
         // Move the uploaded file to the specified directory
         if (move_uploaded_file($imageTempName, $imagePath)) {
-            // File uploaded successfully, proceed to insert plant data into the database
-            $insertQuery = "UPDATE article SET ArticleName = ?, ArticleDes = ?, ArticleImg = ?,UserID = ? WHERE idArticle = ?";
-            $insertStmt = $mysqli->prepare($insertQuery);
-            $insertStmt->bind_param('sssii', $title, $content, $imagePath, $author, $id);
+            // File uploaded successfully, proceed to update article data in the database
+            $updateQuery = "UPDATE article SET ArticleName = ?, ArticleDes = ?, ArticleImg = ?, UserID = ? WHERE idArticle = ?";
+            $updateStmt = $mysqli->prepare($updateQuery);
+
+            // Bind parameters
+            $updateStmt->bind_param('sssii', $title, $content, $imagePath, $author, $article_id);
+
+            // Execute the statement
+            if ($updateStmt->execute()) {
+                $delete_query = "DELETE FROM art_tag where ArticleId = '$article_id' ";
+                $do = mysqli_query($mysqli, $delete_query);
+
+                $tags = $_POST['tags'];
+                foreach ($tags as $tag) {
+
+                    $query2 = "INSERT INTO art_tag (ArticleId, TagID) VALUES (?, ?)";
+                    $stmt = $mysqli->prepare($query2);
+                    $stmt->bind_param('ii', $article_id, $tag);
+                    $stmt->execute();
+                    header("location:../view/blog.php");
+                }
+            } else {
+                // Handle error if execution fails
+                echo "Error updating article: " . $updateStmt->error;
+            }
+
+            // Close the statement
+            $updateStmt->close();
+        } else {
+            // Handle file upload failure
+            echo "Error uploading file.";
         }
+    } else {
+        // Handle case where image is not uploaded
+        echo "No image uploaded.";
     }
 }
+//delete anarticle
 if (isset($_POST['deleteArticle'])) {
-    $id = $_POST['id'];
+    $id = $_POST['toDelete'];
     $query = "DELETE FROM article WHERE idArticle = ?";
     $stmt = $mysqli->prepare($query);
     $stmt->bind_param('i', $id);
+    $result = $stmt->get_result();
     $stmt->execute();
 }

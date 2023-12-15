@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['IdTheme'])) {
     $result = $stmt->get_result();
     $theme = $result->fetch_assoc();
 
-  
+
 
     // Check if a plant with the specified ID exists
     if ($themeId) {
@@ -58,29 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['IdTheme'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateTheme'])) {
 
-    if (isset($_POST['tagstatusoff']) && is_array($_POST['tagstatusoff'])) {
 
-        foreach ($_POST['tagstatusoff'] as $tagId) {
-            if()
-            $updatestatus = "UPDATE tag SET TagSt = 1 WHERE idTag = ?";
 
-            $Upstmt = $mysqli->prepare($updatestatus);
-            $Upstmt->bind_param('i', $tagId);
-            $Upstmt->execute();
-        }
-    }
-    // if (!isset($_POST['tagstatusoff']) && is_array($_POST['tagstatusoff'])) {
-
-    //     if (isset($_POST['tagstatus']) && is_array($_POST['tagstatus'])) {
-    //         foreach ($_POST['tagstatus'] as $tagId) {
-    //             $updatestatus = "UPDATE tag SET TagSt = 0 WHERE idTag = ?";
-
-    //             $Upstmt = $mysqli->prepare($updatestatus);
-    //             $Upstmt->bind_param('i', $tagId);
-    //             $Upstmt->execute();
-    //         }
-    //     }
-    // }
 
     $themeId = $_GET['IdTheme'];
 
@@ -131,65 +110,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateTheme'])) {
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateTag'])) {
-    if (isset($_POST['statusRemove']) && is_array($_POST['statusRemove'])) {
+// if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateTag'])) {
+//     if (isset($_POST['statusRemove']) && is_array($_POST['statusRemove'])) {
 
-        foreach ($_POST['statusRemove'] as $tagId) {
-            $updatestatus = "UPDATE tag SET TagSt = 0 WHERE idTag = ?";
+//         foreach ($_POST['statusRemove'] as $tagId) {
+//             $updatestatus = "UPDATE tag SET TagSt = 0 WHERE idTag = ?";
 
-            $Upstmt = $mysqli->prepare($updatestatus);
-            $Upstmt->bind_param('i', $tagId);
-            $Upstmt->execute();
-        }
-    }
-    $themeId = $_GET['IdTheme'];
+//             $Upstmt = $mysqli->prepare($updatestatus);
+//             $Upstmt->bind_param('i', $tagId);
+//             $Upstmt->execute();
+//         }
+//     }
+//     $themeId = $_GET['IdTheme'];
 
-    $updatedName = $_POST['ThemeName'];
-    $uploadedImage = $_FILES['image'];
+//     $updatedName = $_POST['ThemeName'];
+//     $uploadedImage = $_FILES['image'];
 
-    // Image upload handling
-    $uploadDir = 'uploads/';
+//     // Image upload handling
+//     $uploadDir = 'uploads/';
 
-    // Check if a new image was uploaded
-    if (!empty($uploadedImage['name'])) {
-        $imageName = $uploadedImage['name'];
-        $imageTempName = $uploadedImage['tmp_name'];
+//     // Check if a new image was uploaded
+//     if (!empty($uploadedImage['name'])) {
+//         $imageName = $uploadedImage['name'];
+//         $imageTempName = $uploadedImage['tmp_name'];
 
-        // Generate a unique name for the uploaded image to avoid conflicts
-        $imagePath = $uploadDir . uniqid() . '_' . $imageName;
+//         // Generate a unique name for the uploaded image to avoid conflicts
+//         $imagePath = $uploadDir . uniqid() . '_' . $imageName;
 
-        // Move the uploaded file to the specified directory
-        if (move_uploaded_file($imageTempName, $imagePath)) {
-            // Update plant details with the new image path
-            $updateQuery = "UPDATE theme SET `ThemeName` = ?, `ThemImg` = ? WHERE IdTheme = ?";
-            $updateStmt = $mysqli->prepare($updateQuery);
-            $updateStmt->bind_param('ssi', $updatedName, $imagePath, $themeId);
+//         // Move the uploaded file to the specified directory
+//         if (move_uploaded_file($imageTempName, $imagePath)) {
+//             // Update plant details with the new image path
+//             $updateQuery = "UPDATE theme SET `ThemeName` = ?, `ThemImg` = ? WHERE IdTheme = ?";
+//             $updateStmt = $mysqli->prepare($updateQuery);
+//             $updateStmt->bind_param('ssi', $updatedName, $imagePath, $themeId);
 
-            if ($updateStmt->execute()) {
-                // Redirect or display success message
-                header("Location: dashboardtheme.php");
-                exit();
-            } else {
-                echo "Error updating theme.";
-            }
-        } else {
-            echo "Failed to upload the image.";
-        }
-    } else {
-        // No new image uploaded, update other plant details without changing the image
-        $updateQuery = "UPDATE theme SET `ThemeName` = ? WHERE IdTheme = ?";
-        $updateStmt = $mysqli->prepare($updateQuery);
-        $updateStmt->bind_param('si', $updatedName, $themeId);
+//             if ($updateStmt->execute()) {
+//                 // Redirect or display success message
+//                 header("Location: dashboardtheme.php");
+//                 exit();
+//             } else {
+//                 echo "Error updating theme.";
+//             }
+//         } else {
+//             echo "Failed to upload the image.";
+//         }
+//     } else {
+//         // No new image uploaded, update other plant details without changing the image
+//         $updateQuery = "UPDATE theme SET `ThemeName` = ? WHERE IdTheme = ?";
+//         $updateStmt = $mysqli->prepare($updateQuery);
+//         $updateStmt->bind_param('si', $updatedName, $themeId);
 
-        if ($updateStmt->execute()) {
-            // Redirect or display success message
-            header("Location: dashboardtheme.php");
-            exit();
-        } else {
-            echo "Error updating theme.";
-        }
-    }
-}
+//         if ($updateStmt->execute()) {
+//             // Redirect or display success message
+//             header("Location: dashboardtheme.php");
+//             exit();
+//         } else {
+//             echo "Error updating theme.";
+//         }
+//     }
+// }
 //trying to duplicate but reverse the condition
 
 // if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateTheme'])) {
@@ -329,88 +308,80 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateTag'])) {
 
 
             </div>
-            <?php
-
-            foreach ($tagsForTheme as $tag) :
-                if ($tag['TagSt'] == 1) :
-            ?><ul class="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
-                            <div class="flex items-center ps-3">
-
-                                <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
-                                    <input checked id="bordered-checkbox-2<?php echo $tag['idTag']; ?>" type="checkbox" value="<?php echo $tag['idTag']; ?>" name=" tagstatus[]" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="bordered-checkbox-2<?php echo $tag['idTag']; ?>" class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><?php echo $tag['TagName']; ?></label>
-                                </div>
+            <?php foreach ($tagsForTheme as $tag) : ?>
+                <ul class="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                        <div class="flex items-center ps-3">
+                            <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
+                                <input <?php echo ($tag["TagSt"] == 1) ? "checked" : null ?> id="bordered-checkbox-<?php echo $tag['idTag']; ?>" type="checkbox" value="<?php echo $tag['idTag']; ?>" name="tagStatus[<?php echo $tag['idTag']; ?>]" class="tags w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="bordered-checkbox-<?php echo $tag['idTag']; ?>" class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                    <?php echo $tag['TagName']; ?>
+                                </label>
                             </div>
-                        </li>
-                    </ul>
-
-
-                <?php
-                else :
-                ?>
-                    <ul class="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
-                            <div class="flex items-center ps-3">
-                                <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
-                                    <input id="bordered-checkbox-1<?php echo $tag['idTag']; ?>" type="checkbox" value="<?php echo $tag['idTag']; ?>" name="tagstatusoff[]" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="bordered-checkbox-1<?php echo $tag['idTag']; ?>" class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><?php echo $tag['TagName']; ?></label>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-
-
-            <?php
-                endif;
-            endforeach;
-
-            ?>
+                        </div>
+                    </li>
+                </ul>
+            <?php endforeach; ?>
 
 
             <div class="flex justify-between mt-6">
                 <div class="flex gap-6">
-                    <button type="submit" name="updateTheme" class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">Save</button>
+                    <a href="dashboardtheme.php">
+                        <button type="submit" name="updateTheme" class="updateTheme px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">Save</button>
+                    </a>
                     <a href="dashboard.php">
                         <button type="button" class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">Cancel</button>
                     </a>
                 </div>
             </div>
         </form>
-        <form method="post" action="">
 
-            <?php
-
-            foreach ($tagsForTheme as $tag2) :
-                if ($tag2['TagSt'] == 1) :
-            ?>
-                    <ul class="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
-                            <div class="flex items-center ps-3">
-                                <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
-                                    <input id="bordered-checkbox-1<?php echo $tag2['idTag']; ?>" type="checkbox" value="<?php echo $tag2['idTag']; ?>" name="statusRemove[]" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="bordered-checkbox-1<?php echo $tag2['idTag']; ?>" class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><?php echo $tag2['TagName']; ?></label>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-            <?php
-                endif;
-            endforeach;
-
-            ?>
-
-            <div class="flex justify-between mt-6">
-                <div class="flex gap-6">
-                    <button type="submit" name="updateTag" class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">Save</button>
-                    <a href="dashboard.php">
-                        <button type="button" class="px-6 py-2 leading-5 transform rounded-md focus:outline-none font-bold bg-[#FFF8ED] transition hover:bg-purple-900 hover:text-[#FFF2DF]">Cancel</button>
-                    </a>
-                </div>
-            </div>
-        </form>
     </section>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script>
+        const tags = document.querySelectorAll(".tags");
+        const updateTheme = document.querySelector(".updateTheme");
+
+        tags.forEach(item => {
+            item.addEventListener('click', () => {
+                item.checked ? item.removeAttribute("checked") : item.setAttribute("checked", "checked");
+            });
+        });
+
+        updateTheme.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            const checkedCheckboxes = document.querySelectorAll(".tags:checked");
+            const valuesChekbox = document.querySelectorAll(".tags");
+
+            const checkedValues = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
+            const values = Array.from(valuesChekbox).map(checkbox => checkbox.value);
+            $(document).ready(function() {
+                $.ajax({
+                    method: "Post",
+
+                    url: "updateTag.php",
+                    data: {
+                        checkeValues: checkedValues,
+                        values: values,
+                        themeId: <?php echo $themeId ?>
+
+                    },
+                    success: function(data) {
+
+                        console.log(data);
+
+                        if (data.success) {
+                    // Redirect to the dashboard
+                    window.location.href = "dashboardtheme.php";
+                }
+                    }
+                })
+            })
+
+        });
+    </script>
 </body>
 
 </html>

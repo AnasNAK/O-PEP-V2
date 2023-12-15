@@ -1,5 +1,5 @@
 <?php
-include 'session.php';
+include './session.php';
 
 // Check user session and retrieve the role
 $userRole = checkUserSession($mysqli);
@@ -10,6 +10,7 @@ if ($userRole === 'blocked') {
     exit();
 }
 if ($userRole !== 'client') {
+
     header("Location: SingIn.php");
 }
 
@@ -33,14 +34,17 @@ if (isset($_SESSION['user_email'])) {
 $query1 = "SELECT* FROM theme";
 $result = $mysqli->query($query1);
 $themes = $result->fetch_all(MYSQLI_ASSOC);
-$query2 = "SELECT * FROM tag";
-$result = $mysqli->query($query2);
-$tags = $result->fetch_all(MYSQLI_ASSOC);
-$query3 = "SELECT theme.IdTheme , theme.ThemeName, theme.ThemeDesc, theme.ThemImg , GROUP_CONCAT(tag.TagName) AS TagNames
+// $query2 = "SELECT * FROM tag";
+// $result = $mysqli->query($query2);
+// $tags = $result->fetch_all(MYSQLI_ASSOC);
+$query3 = "SELECT
+    theme.IdTheme, theme.ThemeName, theme.ThemeDesc, theme.ThemImg,
+    GROUP_CONCAT(tag.TagName) AS TagNames
 FROM theme
 LEFT JOIN tag ON theme.IdTheme = tag.Themeid
--- it specifies the tags instead of bringing them all
-GROUP BY theme.ThemeName, theme.ThemeDesc, theme.ThemImg";
+GROUP BY
+    theme.IdTheme, theme.ThemeName, theme.ThemeDesc, theme.ThemImg;
+";
 $result3 = $mysqli->query($query3);
 $tagtheme = $result3->fetch_all(MYSQLI_ASSOC);
 ?>
@@ -206,67 +210,105 @@ $tagtheme = $result3->fetch_all(MYSQLI_ASSOC);
     </section>
 
     <?php
-    foreach ($tagtheme as $theme) :  ?>
-
-        <div class="bg-purple-100 dark:bg-gray-800 overflow-hidden relative mb-5">
-
-            <div class="flex items-center justify-center py-4 md:py-8 flex-wrap">
-                <button type="button" class="text-blue-700 hover:text-white border border-blue-600 bg-white hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-full text-base font-medium px-5 py-2.5 text-center me-3 mb-3 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:bg-gray-900 dark:focus:ring-blue-800">
+    $query2 = "SELECT * FROM tag";
+    $result_tags = $mysqli->query($query2);
+    $tags = $result_tags->fetch_all(MYSQLI_ASSOC);
+    foreach ($tagtheme as $theme) :
+        if ($theme['TagNames']) : ?>
+            <div class="bg-purple-100 dark:bg-gray-800 overflow-hidden relative mb-5">
+                <div class="flex items-center justify-center py-4 md:py-8 flex-wrap">
                     <?php
-                    // Check if TagNames key is set in the array
-                    // if (isset($theme['TagNames'])) {
-                    // Display tags related to the current theme
-                    $tagNames = explode(',', $theme['TagNames']);
-                    foreach ($tagNames as $tagName) {
-                        echo $tagName . ' ';
+                    // Assuming $theme['TagNames'] is a string containing tags separated by a delimiter (e.g., comma)
+                    $tagNamesArray = explode(',', $theme['TagNames']);
+
+                    // Fetch corresponding tag statuses
+                    $tagStatuses = []; // Assuming $tags is the result of your tag query
+                    foreach ($tags as $tag) {
+                        $tagStatuses[$tag['TagName']] = $tag['TagSt'];
                     }
-                    // }
-                    ?></button>
-            </div>
 
-            <div class="text-start w-1/2 py-12 px-4 sm:px-6 lg:py-16 lg:px-8 z-20">
+                    // Loop through the array and display only tags with TagSt equal to 1
+                    foreach ($tagNamesArray as $tagName) {
+                        $tagSt = $tagStatuses[$tagName] ?? null;
 
-                <h2 class="text-3xl font-extrabold text-black dark:text-white sm:text-4xl">
-                    <span class="block">
-                        <?php echo htmlspecialchars($theme['ThemeName']); ?>
-                    </span>
-
-                </h2>
-
-                <p class="text-xl mt-4 text-gray-400">
-                    <?php echo htmlspecialchars($theme['ThemeDesc']); ?>
-                </p>
-
-
-
-
-                <div class="lg:mt-0 lg:flex-shrink-0">
-                    <div class="mt-12 inline-flex rounded-md shadow">
-                        <img src="./assets/images/<?php echo $theme['ThemImg']; ?>" class="absolute top-0 right-0 hidden h-80 mt-40  max-w-1/2 lg:block " />
-                        <form action="" method="POST">
-                            <a href="article.php?IdTheme=<?php echo $theme['IdTheme']; ?>">
-                                <button type="submit" class="px-6 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-purple-300 transition hover:bg-purple-900 hover:text-white">
-                                    See More
-                            </a></button>
-
-                            <a href="editTheme2.php?IdTheme=<?php echo $theme['IdTheme']; ?>" class="text-blue-500 hover:text-blue-600">
-                                <button type="submit" class="px-6 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-purple-300 transition hover:bg-purple-900 hover:text-white">
-
-                                    Edit Theme </a> </button>
-
-
-
-
-                        </form>
-                    </div>
+                        if ($tagSt == 1) {
+                            echo '<button type="button" class="text-blue-700 hover:text-white border border-blue-600 bg-white hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-full text-base font-medium px-5 py-2.5 text-center me-3 mb-3 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:bg-gray-900 dark:focus:ring-blue-800">';
+                            echo $tagName;
+                            echo '</button>';
+                        }
+                    }
+                    ?>
                 </div>
+
+                <div class="flex items-center">
+                    <div class="text-start w-1/2 py-12 px-4 sm:px-6 lg:py-16 lg:px-8 z-20">
+                        <h2 class="text-3xl font-extrabold text-black dark:text-white sm:text-4xl">
+                            <span class="block">
+                                <?php echo htmlspecialchars($theme['ThemeName']); ?>
+                            </span>
+                        </h2>
+
+                        <p class="text-xl mt-4 text-gray-400">
+                            <?php echo htmlspecialchars($theme['ThemeDesc']); ?>
+                        </p>
+                        <div class="lg:mt-0 lg:flex-shrink-0 mt-12 inline-flex rounded-md shadow">
+                            <div class="flex space-x-4 mt-20">
+                                <form action="" method="GET">
+                                    <a href="article.php?IdTheme=<?php echo $theme['IdTheme']; ?>" class="text-white bg-purple-300 hover:bg-purple-900 px-6 py-3 leading-5 transform rounded-md focus:outline-none font-bold transition">
+                                        See More
+                                    </a>
+                                </form>
+                                <?php
+                                if ($userRole === 'admin') {
+                                ?>
+
+                                    <form action="" method="POST">
+                                        <a href="editTheme.php?IdTheme=<?php echo $theme['IdTheme']; ?>" class=" text-blue-500 hover:text-blue-600 px-6 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-purple-300 hover:bg-purple-900 transition">
+                                            Edit Theme
+                                        </a>
+                                    </form> <?php
+                                        }
+                                            ?>
+                            </div>
+                        </div>
+
+
+
+                        <div class="lg:mt-0 lg:flex-shrink-0">
+                            <div class="mt-12 inline-flex flex-col items-start rounded-md shadow">
+                                <?php
+                                // ... (rest of the code remains the same)
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <img src="./assets/images/<?php echo $theme['ThemImg']; ?>" class="w-64 h-auto ml-80" />
+                    </div>
+
+
+
+
+
+                </div>
+
             </div>
 
 
 
 
-        </div>
-    <?php endforeach; ?>
+
+
+
+
+
+
+
+
+    <?php
+        endif;
+    endforeach; ?>
 
 
     <footer class="bg-white">

@@ -13,19 +13,15 @@ if ($userRole !== 'admin') {
     header("Location: SingIn.php");
 }
 
-// Fetch categories data from the database
-// $query = "SELECT * FROM categorie"; // Replace 'categories' with your table name
-// $result = $mysqli->query($query);
-// $categories = $result->fetch_all(MYSQLI_ASSOC);
 
-// Handling form submission to add a plant
+
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Retrieve form data
-    $plantName = $_POST['name'];
-    
-    $categoryId = $_POST['category']; // Assuming 'category' is your category select field
+    $themeName = $_POST['name'];
+    $themeDesc = $_POST['themedesc'];
 
-    // Handle image upload
+ 
     $uploadDir = 'uploads/';
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0755, true);
@@ -42,9 +38,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Move the uploaded file to the specified directory
         if (move_uploaded_file($imageTempName, $imagePath)) {
             // File uploaded successfully, proceed to insert plant data into the database
-            $insertQuery = "INSERT INTO Plant (Name, price, CategorieId, image) VALUES (?, ?, ?, ?)";
+            $insertQuery = "INSERT INTO theme (ThemeName,ThemeDesc) VALUES (?, ?)";
             $insertStmt = $mysqli->prepare($insertQuery);
-            $insertStmt->bind_param('ssss', $plantName, $plantPrice, $categoryId, $imagePath);
+            $insertStmt->bind_param('ss', $themeName, $themeDesc);
 
             if ($insertStmt->execute()) {
                 // Redirect or display success message
@@ -88,18 +84,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
                 <label for="message" class="block mb-2 text-4xl font-bold  text-black ">Description</label>
-                <textarea id="message" rows="4" class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" placeholder="Write your thoughts here..."></textarea>
+                <textarea id="message" rows="4" name="themedesc" class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" placeholder="Write your thoughts here..."></textarea>
 
-                <!-- <div class="form-group mb-6 mt-6 w-full">
-                    <select name="category" class="w-full p-2 rounded-md bg-white text-black">
-                        <option value="">Category</option>
 
-                        <?php foreach ($categories as $category) : ?>
-                            <option value="<?php echo $category['IdCategorie']; ?>">
-                                <?php echo $category['CategorieName']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div> -->
                 <div class="form-group mb-6 mt-6 w-full">
                     <input type="file" name="image" class="block">
                 </div>

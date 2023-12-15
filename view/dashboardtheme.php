@@ -36,11 +36,11 @@ $tagtheme = $result3->fetch_all(MYSQLI_ASSOC);
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteTheme'])) {
     // Ensure the category ID to delete is set
     if (isset($_POST['IdTheme'])) {
-        // Get the category ID to be deleted
-        $PlantIdToDelete = $_POST['IdTheme'];
+
+        $ThemeIdToDelete = $_POST['IdTheme'];
 
         // Prepare the delete query and execute
-        $deleteQuery = "DELETE FROM theme WHERE IdTheme = ?";
+        $deleteQuery = "UPDATE  theme SET ThemeSt =0 WHERE IdTheme = ?";
         $deleteStmt = $mysqli->prepare($deleteQuery);
         $deleteStmt->bind_param('i', $ThemeIdToDelete);
 
@@ -50,62 +50,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteTheme'])) {
             header("Location: dashboard.php");
             exit();
         } else {
-            echo "Error deleting Plant.";
+            echo "Error deleting theme.";
         }
     }
 }
 
-$query = "SELECT * FROM categorie";
-$result = $mysqli->query($query);
-$categories = $result->fetch_all(MYSQLI_ASSOC);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteCategory'])) {
-    if (isset($_POST['categoryId'])) {
-        $categoryIdToDelete = $_POST['categoryId'];
 
-        // Check if there are related records in the plant table
-        $checkQuery = "SELECT * FROM plant WHERE CategorieId = ?";
-        $checkStmt = $mysqli->prepare($checkQuery);
-        $checkStmt->bind_param('i', $categoryIdToDelete);
-        $checkStmt->execute();
-
-        $relatedPlants = $checkStmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-        if (!empty($relatedPlants)) {
-            // Handle related records in the plant table before deleting the category
-            foreach ($relatedPlants as $plant) {
-                // Modify the column name 'PlantId' with the correct column name for the plant's identifier
-                $plantId = $plant['IdPlant'];
-
-                // Delete the related plant
-                $deletePlantQuery = "DELETE FROM plant WHERE IdPlant = ?";
-                $deletePlantStmt = $mysqli->prepare($deletePlantQuery);
-                $deletePlantStmt->bind_param('i', $plantId);
-                $deletePlantStmt->execute();
-
-                // Alternatively, you might perform updates on related plants here
-            }
-        }
-
-        // Proceed to delete the category after handling related records in the plant table
-        $deleteQuery = "DELETE FROM categorie WHERE IdCategorie = ?";
-        $deleteStmt = $mysqli->prepare($deleteQuery);
-        $deleteStmt->bind_param('i', $categoryIdToDelete);
-
-        if ($deleteStmt->execute()) {
-            // After successful deletion, redirect or perform other actions
-            header("Location: dashboard.php");
-            exit();
-        } else {
-            echo "Error deleting category.";
-        }
-    }
-}
-
-// Count plants
-$countPlantsQuery = "SELECT COUNT(*) AS plantCount FROM plant";
-$countPlantsResult = $mysqli->query($countPlantsQuery);
-$plantCount = $countPlantsResult->fetch_assoc()['plantCount'];
 
 // Count number of users with role admin
 $countAdminsQuery = "SELECT COUNT(*) AS adminCount FROM user WHERE roleId = 2";
@@ -310,8 +261,9 @@ $themeCount = $countThemesResult->fetch_assoc()['themeCount'];
                                                                             <p>Edit</p>
                                                                         </a>
                                                                         <form action="" method="POST">
-                                                                            <input type="hidden" name="IdTheme" value="<?php echo $theme['IdTheme']; ?>">
-                                                                            <button type="submit" name="deleteTheme" class="text-red-500 hover:text-red-600">
+                                                                            <input type="hidden" name="deleteTheme" value="<?php echo $plant['IdTheme']; ?>">
+                                                                            <button type="submit" name="deletePlant" class="text-red-500 hover:text-red-600">
+
                                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                                                 </svg>
@@ -355,7 +307,7 @@ $themeCount = $countThemesResult->fetch_assoc()['themeCount'];
 
 
 
-            
+
         </div>
     </div>
     </main>

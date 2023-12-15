@@ -288,33 +288,66 @@ $idTheme = $_GET["IdTheme"];
                 ?>
 
 
-
-            </div>
-
-            <div class="container text-center">
-                <div id="article-pagination" class="grid grid-cols-2 justify-center  gap-4 ml-11"></div>
+                    <div id="<?php echo $row['idArticle']; ?>" class="container text-center">
+                    <div id="article-pagination" class="grid grid-cols-2 justify-center  gap-4 ml-11"></div>
 
 
-                <div id="ok" class="max-w-sm py-20" style="display: none;">
-                    <div class=" relative shadow-lg hover:shadow-xl transition duration-500 rounded-lg bg-purple-100">
-                        <img class="rounded-t-lg w-2/4 h-[200px]" src="<?php echo $row['ArticleImg']; ?>" />
-                        <div class="py-6 p-3 w-[100%] rounded-lg bg-purple-200">
-                            <h1 class="text-gray-700 font-bold text-2xl mb-3 hover:text-gray-900 hover:cursor-pointer">
-                                <?php echo $row['ArticleName']; ?>
-                            </h1>
-                            <p class="text-gray-700 tracking-wide">
-                                <?php
-                                            echo $row['ArticleDes'];
-                                            ?>
-                            </p>
-                            <form class="pt-5 flex flex-col justify-center gap-2 mr-3"
-                                action="../controller/crud_article.php" method="POST">
-                                <button type="submit" name="deleteArticle"
-                                    class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
-                                    Delete
-                                </button>
-                                
-                                <div>
+                        <div id="ok" class="max-w-sm py-20"  style="display: none; ">
+                            <div class=" relative shadow-lg hover:shadow-xl transition duration-500 rounded-lg bg-purple-100">
+                                <img data-target="image" class="rounded-t-lg w-2/4 h-[200px]" src="<?php echo $row['ArticleImg']; ?>" />
+                                <div class="py-6 p-3 w-[100%] rounded-lg bg-purple-200">
+                                    <h1 data-target="name" class="text-gray-700 font-bold text-2xl mb-3 hover:text-gray-900 hover:cursor-pointer">
+                                        <?php echo $row['ArticleName']; ?>
+                                    </h1>
+                                    <p data-target="description" class="text-gray-700 tracking-wide">
+                                        <?php
+                                        echo $row['ArticleDes'];
+                                        ?>
+                                    </p>
+                                    <form class="pt-5 flex flex-col justify-center gap-2 mr-3" action="" method="POST">
+                                        <?php
+                                        if ($row['UserId'] === $User_ID) {
+                                        ?>
+                                            <button type="submit" name="deleteArticle" class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                                Delete
+                                            </button>'
+                                        <?php
+                                        }
+                                        ?>
+
+                                        <div>
+                                            <input hidden type="text" name="toDelete" value="<?php echo $row['idArticle']; ?>" >
+
+                                            <button  type="submit" name="deleteArticle" class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                                See&nbsp;More
+                                            </button>
+
+                                        </div>
+
+
+                                        <?php
+
+                                        if ($row['UserId'] === $User_ID) {
+
+
+                                        ?>
+
+                                            <a href="#" data-role="update">
+                                                <button id="edit_popup" data-id="<?php echo $row['idArticle']; ?>" name="edit_btn" class="edit_popup px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                                    Edit Article
+
+                                                </button>
+                                            </a>
+                                        <?php
+                                        } else {
+                                            echo '';
+                                        }
+                                        ?>
+                                    </form>
+
+
+
+
 
                                  <form method="POST" action="./SpecART.php">
                                  <input hidden name="id_article" value="<?php echo $row['IdArticle']; ?> ">
@@ -591,6 +624,7 @@ $idTheme = $_GET["IdTheme"];
 
     <script src="./assets/js/article.js"></script>
 
+
     <script>
 
         $(document).ready(function () {
@@ -652,7 +686,7 @@ $idTheme = $_GET["IdTheme"];
 
 
         $('#save').click(function(event) {
-
+           
             var id = $('#edit_popup').data('id');
             var name = $('#name').val();
             var image = $('#image').val();

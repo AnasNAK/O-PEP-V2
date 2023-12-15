@@ -269,12 +269,7 @@ $User_ID = $data['IdUser'];
 
                 ?>
 
-
-
-
-
-                    <div id="<?php echo $row['idArticle']; ?>" class="container">
-
+                    <div id="<?php echo $row['idArticle']; ?>" class="container ">
 
 
 
@@ -302,9 +297,9 @@ $User_ID = $data['IdUser'];
                                         ?>
 
                                         <div>
-                                            <input hidden type="text" name="toDelete" value="<?php echo $row['idArticle']; ?>">
+                                            <input hidden type="text" name="toDelete" value="<?php echo $row['idArticle']; ?>" >
 
-                                            <button type="submit" name="deleteArticle" class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                            <button  type="submit" name="deleteArticle" class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
                                                 See&nbsp;More
                                             </button>
 
@@ -589,23 +584,6 @@ $User_ID = $data['IdUser'];
 
     <script src="./assets/js/article.js"></script>
 
-    <script>
-        $document.ready(function() {
-            function load_data(page) {
-                $.ajax({
-                    url: "article-pagination.php",
-                    method: "POST",
-                    data: {
-                        page: page
-                    },
-                    success: function(data) {
-                        $('#article-pagination').html(data);
-                    }
-                })
-            }
-        })
-    </script>
-
 </body>
 <script>
     $(document).ready(function() {
@@ -628,7 +606,7 @@ $User_ID = $data['IdUser'];
 
 
         $('#save').click(function(event) {
-
+           
             var id = $('#edit_popup').data('id');
             var name = $('#name').val();
             var image = $('#image').val();

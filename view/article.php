@@ -14,6 +14,12 @@ $User_ID = $data['IdUser'];
 
 
 ?>
+
+<?php 
+
+$idTheme = $_GET["IdTheme"];
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,6 +32,7 @@ $User_ID = $data['IdUser'];
     <script src="https://kit.fontawesome.com/a4fc922de4.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="./assets/css/article.css">
 
 </head>
 <style>
@@ -192,9 +199,13 @@ $User_ID = $data['IdUser'];
 
         <form id="searchForm" action="article_SBar.php" method="POST">
             <div class="max-w-xl m-auto mb-5">
+
+                <h3 class=" font-bold text-3xl text-center">Search By Name Of Article</h3>
                 <div class="flex space-x-4">
                     <div class="flex rounded-md overflow-hidden w-full">
-                        <input id="LiveSearch" name="article_name" type="text" placeholder="Article name" class="pl-2 w-full bg-purple-300 font-bold rounded-md rounded-r-none placeholder-black" />
+                        <input id="LiveSearch" name="article_name" type="text" placeholder="Article name"
+                            class="pl-2 w-full h-[2rem] bg-purple-300 font-bold rounded-md rounded-r-none placeholder-black" />
+
 
                     </div>
                 </div>
@@ -202,8 +213,9 @@ $User_ID = $data['IdUser'];
         </form>
         <div id="Searchresult" style="display: none;"></div>
         <script>
-            $(document).ready(function() {
-                $("#LiveSearch").keyup(function() {
+            $(document).ready(function () {
+                $("#LiveSearch").keyup(function () {
+
                     var input = $(this).val();
                     // alert(input);
                     if (input != "") {
@@ -213,7 +225,9 @@ $User_ID = $data['IdUser'];
                             data: {
                                 input: input
                             },
-                            success: function(data) {
+
+                            success: function (data) {
+
 
                                 $("#Searchresult").html(data);
                                 $("#Searchresult").css("display", "block");
@@ -232,14 +246,17 @@ $User_ID = $data['IdUser'];
 
 
     <section>
-        <div class="fixed flex flex-col top-14 right-0 w-1/4 hover:w-64 md:w-64 bg-purple-900 h-full  text-white transition-all duration-300 border-none z-1 sidebar">
+        <div
+            class="fixed flex flex-col top-14 right-0 w-1/4 hover:w-64 md:w-64 bg-purple-900 h-full  text-white transition-all duration-300 border-none z-1 sidebar">
             <div class="p-9 overflow-y-auto overflow-x-hidden flex flex-col justify-between flex-grow">
                 <div class="flex items-center">
                     <input type="checkbox" id="check1" class="hidden" />
                     <label for="check1" class="cursor-pointer flex items-center">
-                        <div class="w-5 h-5 border border-gray-300 rounded-md flex-shrink-0 mr-2 focus-within:border-white">
+                        <div
+                            class="w-5 h-5 border border-gray-300 rounded-md flex-shrink-0 mr-2 focus-within:border-white">
                             <!-- Use a visible icon for the checked state -->
-                            <svg class="w-3 h-3 hidden text-xl m-auto font-bold checked-icon" viewBox="0 0 20 20" fill="white" stroke="currentColor">
+                            <svg class="w-3 h-3 hidden text-xl m-auto font-bold checked-icon" viewBox="0 0 20 20"
+                                fill="white" stroke="currentColor">
                                 <path d="M0 11l2-2 5 5L18 3l2 2L7 18z"></path>
                             </svg>
                         </div>
@@ -254,6 +271,7 @@ $User_ID = $data['IdUser'];
                 <i class="bi bi-plus-circle text-black font-bold text-xl "></i>
             </button>
             <div class="grid grid-cols-3  gap-4 ml-11 ">
+
 
                 <?php
 
@@ -271,101 +289,80 @@ $User_ID = $data['IdUser'];
 
 
 
+            </div>
+
+            <div class="container text-center">
+                <div id="article-pagination" class="grid grid-cols-2 justify-center  gap-4 ml-11"></div>
 
 
-                    <div id="<?php echo $row['idArticle']; ?>" class="container">
+                <div id="ok" class="max-w-sm py-20" style="display: none;">
+                    <div class=" relative shadow-lg hover:shadow-xl transition duration-500 rounded-lg bg-purple-100">
+                        <img class="rounded-t-lg w-2/4 h-[200px]" src="<?php echo $row['ArticleImg']; ?>" />
+                        <div class="py-6 p-3 w-[100%] rounded-lg bg-purple-200">
+                            <h1 class="text-gray-700 font-bold text-2xl mb-3 hover:text-gray-900 hover:cursor-pointer">
+                                <?php echo $row['ArticleName']; ?>
+                            </h1>
+                            <p class="text-gray-700 tracking-wide">
+                                <?php
+                                            echo $row['ArticleDes'];
+                                            ?>
+                            </p>
+                            <form class="pt-5 flex flex-col justify-center gap-2 mr-3"
+                                action="../controller/crud_article.php" method="POST">
+                                <button type="submit" name="deleteArticle"
+                                    class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                    Delete
+                                </button>
+                                
+                                <div>
 
-
-
-
-                        <div id="ok" class="max-w-sm py-20   ">
-                            <div class=" relative shadow-lg hover:shadow-xl transition duration-500 rounded-lg bg-purple-100">
-                                <img data-target="image" class="rounded-t-lg w-2/4 h-[200px]" src="<?php echo $row['ArticleImg']; ?>" />
-                                <div class="py-6 p-3 w-[100%] rounded-lg bg-purple-200">
-                                    <h1 data-target="name" class="text-gray-700 font-bold text-2xl mb-3 hover:text-gray-900 hover:cursor-pointer">
-                                        <?php echo $row['ArticleName']; ?>
-                                    </h1>
-                                    <p data-target="description" class="text-gray-700 tracking-wide">
-                                        <?php
-                                        echo $row['ArticleDes'];
-                                        ?>
-                                    </p>
-                                    <form class="pt-5 flex flex-col justify-center gap-2 mr-3" action="" method="POST">
-                                        <?php
-                                        if ($row['UserId'] === $User_ID) {
-                                        ?>
-                                            <button type="submit" name="deleteArticle" class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
-                                                Delete
-                                            </button>'
-                                        <?php
-                                        }
-                                        ?>
-
-                                        <div>
-                                            <input hidden type="text" name="toDelete" value="<?php echo $row['idArticle']; ?>">
-
-                                            <button type="submit" name="deleteArticle" class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
-                                                See&nbsp;More
-                                            </button>
-
-                                        </div>
-
-
-                                        <?php
-
-                                        if ($row['UserId'] === $User_ID) {
-
-
-                                        ?>
-
-                                            <a href="#" data-role="update">
-                                                <button id="edit_popup" data-id="<?php echo $row['idArticle']; ?>" name="edit_btn" class="edit_popup px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
-                                                    Edit Article
-
-                                                </button>
-                                            </a>
-                                        <?php
-                                        } else {
-                                            echo '';
-                                        }
-                                        ?>
-                                    </form>
-
-
-
-
+                                 <form method="POST" action="./SpecART.php">
+                                 <input hidden name="id_article" value="<?php echo $row['IdArticle']; ?> ">
+                                 <button type="submit"
+                                        class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                        See&nbsp;More
+                                    </button>
+                                 </form>
+                                    <button type="submit"
+                                        class="px-4 py-3 leading-5 transform rounded-md focus:outline-none font-bold bg-white transition hover:bg-purple-900 hover:text-white">
+                                        Edit&nbsp;Article
+                                    </button>
 
                                 </div>
+                            </form>
+                        </div>
+                        <div class="absolute top-2 right-2 py-2 px-4 bg-purple-200 rounded-lg">
+                            <div class="flex items-center mb-4">
 
 
-                                <div class="absolute top-2 right-2 py-2 px-4 bg-purple-200 rounded-lg">
-                                    <div class="flex items-center mb-4">
-
-
-                                        <div class="mr-2">
-                                            <i class="fas fa-thumbs-up text-blue-500 text-2xl cursor-pointer"></i>
-                                        </div>
-
-                                        <span class="text-sm">100</span>
-                                    </div>
-
-                                    <div class="flex items-center">
-
-                                        <div class="mr-2">
-                                            <i class="fas fa-thumbs-down text-red-500 text-2xl cursor-pointer"></i>
-                                        </div>
-
-                                        <span class="text-sm">20</span>
-                                    </div>
-
+                                <div class="mr-2">
+                                    <i class="fas fa-thumbs-up text-blue-500 text-2xl cursor-pointer"></i>
                                 </div>
+
+                                <span class="text-sm">100</span>
                             </div>
                         </div>
 
 
+
+                            <div class="flex items-center">
+
+                                <div class="mr-2">
+                                    <i class="fas fa-thumbs-down text-red-500 text-2xl cursor-pointer"></i>
+                                </div>
+
+                                <span class="text-sm">20</span>
+                            </div>
+
+                        </div>
+
                     </div>
+                </div>
+
+
             </div>
-            <?php  ?>
+        </div>
+        <?php  ?>
 
 
 
@@ -460,19 +457,24 @@ $User_ID = $data['IdUser'];
                         <div class="form-group mb-6 mt-6 w-full">
                             <?php
 
-                            $email = $_SESSION['user_email'];
-                            $id = $_GET['IdTheme'];
+                        
+                        $email = $_SESSION['user_email'];
+                        $id = $_GET['IdTheme'];
+                    
+                        $request = "SELECT * FROM tag WHERE Themeid = '$id'";
+                        $exec = mysqli_query($mysqli,$request);
+                        $results = mysqli_fetch_all($exec,MYSQLI_ASSOC);
+                        foreach($results as $result){
+                        ?>
 
-                            $request = "SELECT * FROM tag WHERE Themeid = '$id'";
-                            $exec = mysqli_query($mysqli, $request);
-                            $results = mysqli_fetch_all($exec, MYSQLI_ASSOC);
-                            foreach ($results as $result) {
-                            ?>
+                            <div class="flex items-center">
+                                <input checked id="checked-checkbox" type="checkbox"
+                                    value="<?php echo $result['idTag']; ?>"
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <label name="tags[]" for="checked-checkbox"
+                                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><?php echo $result['TagName']; ?></label>
+                            </div>
 
-                                <div class="flex items-center">
-                                    <input data-target="tags" name="tags[]" checked id="checked-checkbox" type="checkbox" value="<?php echo $result['idTag']; ?>" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="checked-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"><?php echo $result['TagName']; ?></label>
-                                </div>
                             <?php
                             }
 
@@ -590,21 +592,43 @@ $User_ID = $data['IdUser'];
     <script src="./assets/js/article.js"></script>
 
     <script>
-        $document.ready(function() {
+
+        $(document).ready(function () {
+            var id_theme = <?php echo $idTheme; ?>;
+            load_data();
+
+
             function load_data(page) {
                 $.ajax({
                     url: "article-pagination.php",
                     method: "POST",
                     data: {
-                        page: page
+
+                        page: page,
+                        id_theme: id_theme
                     },
-                    success: function(data) {
+                    success: function (data) {
+                        $('#ok').hide();
+
                         $('#article-pagination').html(data);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
                     }
-                })
+                });
             }
-        })
+
+            $(document).on('click', '.pagination_links', function () {
+                $('#ok').show();
+                var page = $(this).attr("id");
+                load_data(page);
+            });
+        });
     </script>
+
+    <form  action="./article-pagination.php" method="POST">
+        <input hidden name="id_theme" value="<?php echo $idTheme; ?> ">
+    </form>
 
 </body>
 <script>
